@@ -36,6 +36,7 @@ class Leg:
         self.beta = beta
         self.calculate_forward()
         
+        
     def rot_matrix(self, angle):
         return np.array([[cos(angle), -sin(angle)], [sin(angle),  cos(angle)]])
 
@@ -134,6 +135,7 @@ class Leg:
         arc_FG_angle_r = self.vec_OG   - self.vec_lower_rim_r
         arc_HF_angle_l = self.vec_OF_l - self.vec_upper_rim_l
         arc_FG_angle_l = self.vec_OG   - self.vec_lower_rim_l
+        angle_G = np.rad2deg(np.arctan2(self.vec_OG[1], self.vec_OG[0])-np.arctan2(self.vec_OG[1]-self.vec_lower_rim_l[1], self.vec_OG[0]-self.vec_lower_rim_l[0]))
         
         arc_HF_r = patches.Arc(self.vec_upper_rim_r, 2 * self.R, 2 * self.R, angle=np.rad2deg(np.arctan2(arc_HF_angle_r[1], arc_HF_angle_r[0])), 
                                theta1=0, theta2=np.rad2deg(self.n_HF), edgecolor='red', linewidth=linewidth, label='Upper_Rim_r')
@@ -153,17 +155,11 @@ class Leg:
         arc_FG_l_outer = patches.Arc(self.vec_lower_rim_l, 2 * (self.R + self.r), 2 * (self.R + self.r), angle=np.rad2deg(np.arctan2(arc_FG_angle_l[1], arc_FG_angle_l[0])), 
                                      theta1=-np.rad2deg(np.pi-self.n_HF), theta2=0, edgecolor='black', linewidth=linewidth, label='Lower_Rim_l')
         
-        # arc_G_outer = patches.Arc(self.vec_OG, 2 * self.r, 2 * self.r, angle=np.rad2deg(np.arctan2(self.OG.pos[1], self.OG.pos[0])), 
-        #                              theta1=-np.rad2deg(self.contact_angle_G_max), theta2=np.rad2deg(self.contact_angle_G_max), edgecolor='red', linewidth=linewidth, label='Arc G')
-        
+        arc_G_outer = patches.Arc(self.vec_OG, 2 * self.r, 2 * self.r, angle=np.rad2deg(np.arctan2(self.vec_OG[1], self.vec_OG[0])), 
+                                     theta1=-angle_G-0.001, theta2=angle_G+0.001, edgecolor='red', linewidth=linewidth, label='Arc G')
+
         # create end point G
-        circle_G = patches.Circle(self.vec_OG, self.r, edgecolor='red', linewidth=linewidth, facecolor='none', label='G')
-        
-        # circle_observe = patches.Circle(self.observe_point.pos, 0.005, edgecolor='darkblue', linewidth=linewidth, facecolor='none', label='G')
-        
-        # create velocity arrow
-        # ax = self.draw_vel(ax)
-        
+        circle_G = patches.Circle(self.vec_OG, self.r, edgecolor='green', linewidth=linewidth-1, facecolor='none', label='G')
         
         # Add all elements
         ax.add_patch(line_OA_r)
@@ -189,8 +185,7 @@ class Leg:
         ax.add_patch(arc_FG_l_outer)
         
         ax.add_patch(circle_G)
-        # ax.add_patch(arc_G_outer)
-        # ax.add_patch(circle_observe)
+        ax.add_patch(arc_G_outer)
         
         
         # Setup the ax
@@ -224,12 +219,14 @@ class Leg:
     
 if __name__ == '__main__':
     leg = Leg()
+    phi = [0.9773817543439947, -0.9773817507014941]
+    theta = (phi[0] - phi[1]) / 2 + np.deg2rad(17)
+    beta = leg.beta_0
+    # theta = 45
+    # beta = 0
     
-    theta = 17
-    beta = 30
-    
-    theta = deg2rad(theta) + leg.theta_0
-    beta = deg2rad(beta) + leg.beta_0
+    # theta = deg2rad(theta) + leg.theta_0
+    # beta = deg2rad(beta) + leg.beta_0
     
     leg.set_tb(theta=theta, beta=beta)
     
@@ -249,3 +246,4 @@ if __name__ == '__main__':
     
     leg.plot_animation(tb_list=tb_list)
     '''
+    

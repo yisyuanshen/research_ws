@@ -9,13 +9,21 @@ theta_list = []
 
 # right plane
 G_y = []
+
 H_x = []
 H_y = []
-F_x = []
-F_y = []
+F_x_upper = []
+F_y_upper = []
+
+F_x_lower = []
+F_y_lower = []
+G_x_lower = []
+G_y_lower = []
+
 U_x = []
 U_y = []
 U_len = []
+
 L_x = []  
 L_y = []
 L_len = []
@@ -29,31 +37,26 @@ for theta in range(17*sample_rate, 160*sample_rate):
     
     theta_list.append(theta)
     
-    G_y.append(leg.vec_OG[1])
-    H_x.append(leg.vec_OH_r[0])
-    H_y.append(leg.vec_OH_r[1])
-    F_x.append(leg.vec_OF_r[0])
-    F_y.append(leg.vec_OF_r[1])
+    G_y.append((leg.R+leg.r)/leg.R*leg.vec_OG[1])
+    
+    H_x.append(leg.vec_upper_rim_r[0] + (leg.R+leg.r)/leg.R*(leg.vec_OH_r[0]-leg.vec_upper_rim_r[0]))
+    H_y.append(leg.vec_upper_rim_r[1] + (leg.R+leg.r)/leg.R*(leg.vec_OH_r[1]-leg.vec_upper_rim_r[1]))
+    F_x_upper.append(leg.vec_upper_rim_r[0] + (leg.R+leg.r)/leg.R*(leg.vec_OF_r[0]-leg.vec_upper_rim_r[0]))
+    F_y_upper.append(leg.vec_upper_rim_r[1] + (leg.R+leg.r)/leg.R*(leg.vec_OF_r[1]-leg.vec_upper_rim_r[1]))
+    
+    F_x_lower.append(leg.vec_lower_rim_r[0] + (leg.R+leg.r)/leg.R*(leg.vec_OF_r[0]-leg.vec_lower_rim_r[0]))
+    F_y_lower.append(leg.vec_lower_rim_r[1] + (leg.R+leg.r)/leg.R*(leg.vec_OF_r[1]-leg.vec_lower_rim_r[1]))
+    G_x_lower.append(leg.vec_lower_rim_r[0] + (leg.R+leg.r)/leg.R*(leg.vec_OG[0]-leg.vec_lower_rim_r[0]))
+    G_y_lower.append(leg.vec_lower_rim_r[1] + (leg.R+leg.r)/leg.R*(leg.vec_OG[1]-leg.vec_lower_rim_r[1]))
+    
     U_x.append(leg.vec_upper_rim_r[0])
     U_y.append(leg.vec_upper_rim_r[1])
     U_len.append(np.linalg.norm(leg.vec_upper_rim_r))
+    
     L_x.append(leg.vec_lower_rim_r[0])
     L_y.append(leg.vec_lower_rim_r[1])
     L_len.append(np.linalg.norm(leg.vec_lower_rim_r))
     
-
-theta_list = np.array(theta_list)
-G_y = np.array(G_y)
-H_x = np.array(H_x)
-H_y = np.array(H_y)
-F_x = np.array(F_x)
-F_y = np.array(F_y)
-U_x = np.array(U_x)
-U_y = np.array(U_y)
-U_len = np.array(U_len)
-L_x = np.array(L_x)
-L_y = np.array(L_y)
-L_len = np.array(L_len)
 
 '''
 data = {
@@ -65,6 +68,7 @@ df = pd.DataFrame(data)
 df.to_csv('theta_Gy.csv', index=False)
 '''
 
+
 # forward poly fit
 degree = 7
 coef = np.polyfit(theta_list, G_y, degree)
@@ -72,11 +76,19 @@ print(f"Gy_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
 coef = np.polyfit(theta_list, H_x, degree)
 print(f"Hx_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
 coef = np.polyfit(theta_list, H_y, degree)
-print(f"Hy_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]") 
-coef = np.polyfit(theta_list, F_x, degree)
-print(f"Fx_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
-coef = np.polyfit(theta_list, F_y, degree)
-print(f"Fy_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]") 
+print(f"Hy_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
+coef = np.polyfit(theta_list, F_x_upper, degree)
+print(f"Fx_upper_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
+coef = np.polyfit(theta_list, F_y_upper, degree)
+print(f"Fy_upper_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
+coef = np.polyfit(theta_list, F_x_lower, degree)
+print(f"Fx_lower_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
+coef = np.polyfit(theta_list, F_y_lower, degree)
+print(f"Fy_lower_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
+coef = np.polyfit(theta_list, G_x_lower, degree)
+print(f"Gx_lower_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
+coef = np.polyfit(theta_list, G_y_lower, degree)
+print(f"Gy_lower_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
 coef = np.polyfit(theta_list, U_x, degree)
 print(f"Ux_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
 coef = np.polyfit(theta_list, U_y, degree)
@@ -85,6 +97,7 @@ coef = np.polyfit(theta_list, L_x, degree)
 print(f"Lx_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
 coef = np.polyfit(theta_list, L_y, degree)
 print(f"Ly_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
+
 
 # inverse poly fit
 degree = 7
@@ -98,8 +111,8 @@ print(f"inv_L_len_coef = [{', '.join([f'{c:.8f}' for c in coef[::-1]])}]")
 
 '''
 plt.figure(figsize=(10, 6))
-plt.plot(theta_list, L_x, color='blue', label='Data', linewidth=0.5)
-# plt.plot(theta_list, L_len, color='red', label='Data', linewidth=0.5)
+plt.plot(theta_list, lower_x, color='blue', label='Data', linewidth=0.5)
+# plt.plot(theta_list, lower_len, color='red', label='Data', linewidth=0.5)
 
 degree = 7
 coefficients = np.polyfit(G_y, theta_list, degree)
