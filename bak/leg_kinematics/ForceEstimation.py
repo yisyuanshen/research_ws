@@ -16,33 +16,38 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     return y
 
 
-robot_data_path = os.path.dirname(os.path.realpath(__file__))+'/data/0611/robot/U_1.csv'
-# force_data_path = os.path.dirname(os.path.realpath(__file__))+'/data/0611/vicon/G.csv'
+single_leg_mode = True
 
-df_robot_data = pd.read_csv(robot_data_path)
-# df_force_data = pd.read_csv(force_data_path, dtype=str)
-# df_trigger_data = pd.read_csv(force_data_path, dtype=str)
+curr_path = os.path.dirname(os.path.realpath(__file__))+'/data/G'
 
-kt = 2.23
+if not single_leg_mode:
+    robot_data = pd.read_csv(f'{curr_path}/output_robot.csv')
+    force_data_1 = pd.read_csv(f'{curr_path}/Force Plate 1.csv')
+    force_data_2 = pd.read_csv(f'{curr_path}/Force Plate 2.csv')
+    force_data_3 = pd.read_csv(f'{curr_path}/Force Plate 3.csv')
+    force_data_4 = pd.read_csv(f'{curr_path}/Force Plate 4.csv')
 
-phi_list = [[data.AR_rpy_pos, data.AL_rpy_pos] for data in df_robot_data.itertuples()]
-trq_list = [[data.AR_rpy_torq * kt, data.AL_rpy_torq * kt] for data in df_robot_data.itertuples()]
+    data_A = pd.merge(force_data_1, robot_data.loc[:, ['Time', 'A_phi_r', 'A_phi_l', 'A_trq_r', 'A_trq_l']], on='Time')
+    data_B = pd.merge(force_data_1, robot_data.loc[:, ['Time', 'B_phi_r', 'B_phi_l', 'B_trq_r', 'B_trq_l']], on='Time')
+    data_C = pd.merge(force_data_1, robot_data.loc[:, ['Time', 'C_phi_r', 'C_phi_l', 'C_trq_r', 'C_trq_l']], on='Time')
+    data_D = pd.merge(force_data_1, robot_data.loc[:, ['Time', 'D_phi_r', 'D_phi_l', 'D_trq_r', 'D_trq_l']], on='Time')
 
-for i in range(df_robot_data.__len__()):
-    phi = phi_list[i]
-    trq = trq_list[i]
-    
-    theta = (phi[0] - phi[1]) / 2 + np.deg2rad(17)
-    beta  = (phi[0] + phi[1]) / 2
-    
-    alpha, contact_rim = LegKinematics.get_alpha(theta, beta)    
-    jacobian = LegKinematics.get_jacobian(theta, beta, alpha)
-    
-    force_est = np.linalg.inv(jacobian).T @ np.array(trq)
-    
-    print(force_est[1])
+    data_A.dropna(inplace=True)
+    data_B.dropna(inplace=True)
+    data_C.dropna(inplace=True)
+    data_D.dropna(inplace=True)
 
-'''
+    data_A.rename(columns={'A_phi_r': 'phi_r', 'A_phi_l': 'phi_l', 'A_trq_r': 'trq_r', 'A_trq_l': 'trq_l'}, inplace=True)
+    data_B.rename(columns={'B_phi_r': 'phi_r', 'B_phi_l': 'phi_l', 'B_trq_r': 'trq_r', 'B_trq_l': 'trq_l'}, inplace=True)
+    data_C.rename(columns={'C_phi_r': 'phi_r', 'C_phi_l': 'phi_l', 'C_trq_r': 'trq_r', 'C_trq_l': 'trq_l'}, inplace=True)
+    data_D.rename(columns={'D_phi_r': 'phi_r', 'D_phi_l': 'phi_l', 'D_trq_r': 'trq_r', 'D_trq_l': 'trq_l'}, inplace=True)
+
+else:
+    robot_data = pd.read_csv(f'{curr_path}/output_leg.csv')
+    force_data_1 = pd.read_csv(f'{curr_path}/Force Plate.csv')
+    data_A = pd.merge(force_data_1, robot_data.loc[:, ['Time', 'phi_r', 'phi_l', 'trq_r', 'trq_l']], on='Time')
+    data_A.dropna(inplace=True)
+
 t = []
 f_est = []
 f_meas = []
@@ -63,9 +68,11 @@ for data in data_A.itertuples():
     
     alpha, contact_rim = LegKinematics.get_alpha(theta, beta)    
     jacobian = LegKinematics.get_jacobian(theta, beta, alpha)
-    
-    force_est = np.linalg.inv(jacobian).T @ np.array(trq)
+    # print(np.linalg.inv(jacobian).T, np.array(trq))
+    force_est = np.linalg.inv(jacobian).T @ np.array(trq) #- [0, 0.751427*9.81]
     force_meas = np.array([data.force_x, -data.force_z])
+    
+    print(force_est[1])
     
     t.append(data.Time)
     f_est.append(force_est)
@@ -80,7 +87,7 @@ f_meas = np.array(f_meas)
 f_err = f_meas - f_est
 
 # filter parameters
-cutoff_frequency = 30.0
+cutoff_frequency = 3.0
 sampling_frequency = 1000.0
 filter_order = 4
 
@@ -126,4 +133,3 @@ plt.yticks(fontsize=20)
 plt.grid(True)
 
 plt.show()
-'''
