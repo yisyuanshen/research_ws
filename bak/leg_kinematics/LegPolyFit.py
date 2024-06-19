@@ -29,7 +29,7 @@ for theta in range(17*sample_rate, 160*sample_rate):
     
     theta_list.append(theta)
     
-    G_y.append(leg.vec_OG[1])
+    G_y.append(leg.vec_OG[1]-leg.r)
     H_x.append(leg.vec_OH_r[0])
     H_y.append(leg.vec_OH_r[1])
     F_x.append(leg.vec_OF_r[0])

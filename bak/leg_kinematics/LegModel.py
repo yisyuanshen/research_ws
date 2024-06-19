@@ -179,22 +179,25 @@ class Leg:
         ax.add_patch(arc_HF_l)
         ax.add_patch(arc_FG_l)
         
-        ax.add_patch(arc_HF_r_outer)
-        ax.add_patch(arc_FG_r_outer)
-        ax.add_patch(arc_HF_l_outer)
-        ax.add_patch(arc_FG_l_outer)
+        # ax.add_patch(arc_HF_r_outer)
+        # ax.add_patch(arc_FG_r_outer)
+        # ax.add_patch(arc_HF_l_outer)
+        # ax.add_patch(arc_FG_l_outer)
         
-        ax.add_patch(circle_G)
-        ax.add_patch(arc_G_outer)
+        # ax.add_patch(circle_G)
+        # ax.add_patch(arc_G_outer)
         
         
         # Setup the ax
         ax.set_aspect('equal')
         ax.set_xlim(-0.35, 0.35)
         ax.set_ylim(-0.35, 0.35)
-        ax.set_xlabel('X-axis')
-        ax.set_ylabel('Y-axis')
-        ax.set_title('Leg Kinematics')
+        ax.set_xlabel('X-axis', fontsize=20)
+        ax.set_ylabel('Y-axis', fontsize=20)
+        ax.set_title('Leg Kinematics', fontsize=20)
+        
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
         
         
     def plot_once(self):
@@ -222,11 +225,12 @@ if __name__ == '__main__':
     phi = [0.9773817543439947, -0.9773817507014941]
     theta = (phi[0] - phi[1]) / 2 + np.deg2rad(17)
     beta = leg.beta_0
-    # theta = 45
-    # beta = 0
     
-    # theta = deg2rad(theta) + leg.theta_0
-    # beta = deg2rad(beta) + leg.beta_0
+    theta = 30
+    beta = 75
+    
+    theta = deg2rad(theta) + leg.theta_0
+    beta = deg2rad(beta) + leg.beta_0
     
     leg.set_tb(theta=theta, beta=beta)
     
