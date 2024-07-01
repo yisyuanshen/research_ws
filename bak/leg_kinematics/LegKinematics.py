@@ -1,108 +1,99 @@
 import numpy as np
 from numpy.polynomial import Polynomial
 
-# Right Plane
-Gx_coef = [0, 0, 0, 0, 0, 0, 0]
-Gy_coef = [-0.08004471, -0.04301110, -0.10580851, 0.08885408, -0.03103048, -0.00111065, 0.00303460, -0.00046520]
-# Gy_coef = [-0.09254471, -0.04301110, -0.10580851, 0.08885408, -0.03103048, -0.00111065, 0.00303460, -0.00046520]
-Hx_coef = [-0.02986811, 0.10150953, -0.00033831, -0.00676546, -0.00761573, 0.00241217, 0.00006521, -0.00005435]
-Hy_coef = [0.09842200, 0.02021071, -0.04976560, -0.00235200, 0.00299106, 0.00091636, -0.00032807, 0.00001824]
-Fx_coef = [0.07922198, -0.00642995, -0.00212025, -0.02514313, 0.02091331, -0.00555113, 0.00002911, 0.00013153]
-Fy_coef = [-0.04889044, -0.04099782, -0.05057615, 0.05336587, -0.02925680, 0.00442350, 0.00105720, -0.00025475]
-Ux_coef = [-0.00966952, 0.03326879, -0.00141826, -0.00296346, -0.00086992, -0.00075178, 0.00037014, -0.00002506]
-Uy_coef = [-0.00066899, 0.01477295, -0.04975541, 0.02979176, -0.01978453, 0.00452661, 0.00037298, -0.00016160]
-Lx_coef = [0.00620571, -0.00537372, -0.06028321, 0.02548079, 0.00855482, -0.00870958, 0.00213482, -0.00015989]
-Ly_coef = [0.02047847, -0.04889900, -0.08046577, 0.04415016, -0.00771927, -0.00429579, 0.00207711, -0.00021894]
+# coefficients of all the points on the right plane
+A_x = [-1.129288648260761e-05, 0.08009403713692657, -0.0003107144391614336, -0.012797873528955785, -0.0005295870938277623, 0.0009747008204006224, -0.00010114551418980388, -3.968574387602764e-07]
+A_y = [0.07999814924773316, 1.7145219587770126e-05, -0.04006470379517542, 0.00013128098674423447, 0.0031745436156560103, 0.00011924483962515575, -0.0001666256258221374, 1.515537414584306e-05]
+B_x = [-1.411610810312764e-05, 0.1001175464211573, -0.0003883930489497228, -0.015997341911197397, -0.0006619838672826222, 0.001218376025499842, -0.00012643189273703638, -4.960717984706521e-07]
+B_y = [0.09999768655966619, 2.14315244865344e-05, -0.050080879743974474, 0.00016410123343752557, 0.003968179519564681, 0.00014905604953358207, -0.000208282032278111, 1.8944217682340097e-05]
+C_x = [0.08730444109525554, 0.006038411912842335, -0.0019480640877697262, -0.02954182547087869, 0.02239356552307967, -0.005419375878885002, -0.00010688833690058729, 0.00014758582950897729]
+C_y = [-0.02935430914372217, -0.04803664310194349, -0.05069851096683131, 0.04823695695975268, -0.024522775370319442, 0.0034302257248766694, 0.000970517201979338, -0.00022005316153193402]
+D_x = [-3.4747343022248285e-06, 0.02464431911905334, -9.560444281634296e-05, -0.003937807239681712, -0.000162949875022163, 0.00029990794473815584, -3.1121696673735556e-05, -1.221099811557898e-07]
+D_y = [-0.011597133589474484, 0.01203679245902142, -0.05726952461757285, 0.04728991254517789, -0.03351780358840571, 0.010131978808776108, -0.0007682114483517649, -6.52844643872138e-05]
+E_x = [1.9284883733625186e-16, -1.4324042428771431e-15, 3.6555203154059035e-15, -4.3189076651658346e-15, 2.542849414643894e-15, -7.098433225234169e-16, 6.760715836529259e-17, 2.4439010417800376e-18]
+E_y = [-0.05230614818378873, 0.017378857898768023, -0.06491611164974555, 0.06824930434892112, -0.04982551345687386, 0.014582082795063848, -0.0010355829250312493, -0.00010103550373527039]
+F_x = [0.07922115681627133, -0.0064245034694449385, -0.0021344474707275475, -0.02512408462146725, 0.020898976289620615, -0.005545020060861925, 2.7733258483555903e-05, 0.0001316598828257355]
+F_y = [-0.04888948991749337, -0.04100243386330336, -0.050568505590458196, 0.05336130836442207, -0.02925741541443177, 0.004425371925477578, 0.001056446425428136, -0.0002546503426689543]
+G_x = [5.692831173187612e-16, -4.2389959233541044e-15, 1.1233596662274271e-14, -1.4258205079718426e-14, 9.514532901870432e-15, -3.366933068026824e-15, 5.829486054269246e-16, -3.704221547207857e-17]
+G_y = [-0.08004422213631104, -0.04301265930703809, -0.10580878294257633, 0.08886009184138272, -0.03103902364866719, -0.001105418324450194, 0.0030330875126614357, -0.0004650360042865928]
+H_x = [-0.029867885022261887, 0.1015083446518684, -0.0003359302945983391, -0.006767707421146685, -0.007614704919851656, 0.002412001729076878, 6.519366276181607e-05, -5.434796710906423e-05]
+H_y = [0.09842205910372219, 0.020210162361816802, -0.04976385386568556, -0.0023547588103848085, 0.0029934392163673065, 0.000915230066986905, -0.00032778979330257043, 1.8208984392037498e-05]
+U_x = [-0.009669615824629486, 0.03326996939355064, -0.0014227965133690036, -0.0029554816183596563, -0.0008772745633094239, -0.0007481061509797202, 0.00036920343536740816, -2.4962239045435592e-05]
+U_y = [-0.0006682432219354362, 0.014768821071982609, -0.04974684856179978, 0.02978313440927041, -0.0197800620541211, 0.004525511094612111, 0.00037306235275841695, -0.00016158912158916643]
+L_x = [0.006204808983197836, -0.005367722922662346, -0.060298802271597424, 0.025501651107259254, 0.008539152550844633, -0.008702919013865187, 0.002133326874710949, -0.0001597568122447928]
+L_y = [0.02047830349473066, -0.048896242660697795, -0.08047731295274864, 0.0441713134318154, -0.007739219889231084, -0.004285690146924385, 0.002074504051417415, -0.00021867040854111553]
 
-inv_Gy_coef = [-5.95900136, -198.86115887, -2844.17944295, -23374.36177286, -113384.68778569, -325133.48971168, -511744.25427474, -342037.77994577]
-inv_U_len_coef = [0.29524048, 31.24201687, -211.52772499, -399.43288897, 27998.38121498, -261547.09889344, 1067959.76233762, -1657663.98172204]
-inv_L_len_coef = [0.29530550, 11.02411426, -72.41431581, 986.69737154, -8170.91611485, 38941.64890575, -98163.01663375, 101568.42569989]
+# Polynominal of all the points on the right plane
+A_poly = np.array([Polynomial(A_x), Polynomial(A_y)])
+B_poly = np.array([Polynomial(B_x), Polynomial(B_y)])
+C_poly = np.array([Polynomial(C_x), Polynomial(C_y)])
+D_poly = np.array([Polynomial(D_x), Polynomial(D_y)])
+E_poly = np.array([Polynomial(E_x), Polynomial(E_y)])
+F_poly = np.array([Polynomial(F_x), Polynomial(F_y)])
+G_poly = np.array([Polynomial(G_x), Polynomial(G_y)])
+H_poly = np.array([Polynomial(H_x), Polynomial(H_y)])
+U_poly = np.array([Polynomial(U_x), Polynomial(U_y)])
+L_poly = np.array([Polynomial(L_x), Polynomial(L_y)])
 
-Ux_poly = Polynomial(Ux_coef)
-Hx_poly = Polynomial(Hx_coef)
-Hy_poly = Polynomial(Hy_coef)
-Fx_poly = Polynomial(Fx_coef)
-Fy_poly = Polynomial(Fy_coef)
-Gx_poly = Polynomial(Gx_coef)
-Gy_poly = Polynomial(Gy_coef)
-Ux_poly = Polynomial(Ux_coef)
-Uy_poly = Polynomial(Uy_coef)
-Lx_poly = Polynomial(Lx_coef)
-Ly_poly = Polynomial(Ly_coef)
+# Other global parameters
+eps = 10e-6
 
 
 def rot_matrix(angle):
-    return np.array([[np.cos(angle), -np.sin(angle)],
-                     [np.sin(angle),  np.cos(angle)]])
+        return np.array([[np.cos(angle), -np.sin(angle)],
+                         [np.sin(angle),  np.cos(angle)]])
 
 
 def get_alpha(theta, beta):
     rot_beta = rot_matrix(beta)
     
-    H_r = rot_beta @ np.array([Hx_poly(theta), Hy_poly(theta)])
-    F_r = rot_beta @ np.array([Fx_poly(theta), Fy_poly(theta)])
-    U_r = rot_beta @ np.array([Ux_poly(theta), Uy_poly(theta)])
-    L_r = rot_beta @ np.array([Lx_poly(theta), Ly_poly(theta)])
-    G   = rot_beta @ np.array([Gx_poly(theta), Gy_poly(theta)])
-    H_l = rot_beta @ np.array([-Hx_poly(theta), Hy_poly(theta)])
-    F_l = rot_beta @ np.array([-Fx_poly(theta), Fy_poly(theta)])
-    U_l = rot_beta @ np.array([-Ux_poly(theta), Uy_poly(theta)])
-    L_l = rot_beta @ np.array([-Lx_poly(theta), Ly_poly(theta)])
+    H_r = rot_beta @ [ H_poly[0](theta), H_poly[1](theta)]
+    U_r = rot_beta @ [ U_poly[0](theta), U_poly[1](theta)]
+    F_r = rot_beta @ [ F_poly[0](theta), F_poly[1](theta)]
+    L_r = rot_beta @ [ L_poly[0](theta), L_poly[1](theta)]
+    G   = rot_beta @ [ G_poly[0](theta), G_poly[1](theta)]
+    L_l = rot_beta @ [-L_poly[0](theta), L_poly[1](theta)]
+    F_l = rot_beta @ [-F_poly[0](theta), F_poly[1](theta)]
+    U_l = rot_beta @ [-U_poly[0](theta), U_poly[1](theta)]
+    H_l = rot_beta @ [-H_poly[0](theta), H_poly[1](theta)]
     
     R = 0.1
     contact_height = []
-    contact_height.append(U_r[1]-R if H_r[0] >= U_r[0] >= F_r[0] else 0)
-    contact_height.append(L_r[1]-R if F_r[0] >= L_r[0] >= G[0] else 0)
+    contact_height.append(U_r[1]-R if U_r[0] - H_r[0] < eps and F_r[0] - U_r[0] < eps else 0)
+    contact_height.append(L_r[1]-R if L_r[0] - F_r[0] < eps and   G[0] - L_r[0] < eps else 0)
     contact_height.append(G[1])
-    contact_height.append(L_l[1]-R if G[0] >= L_l[0] >= F_l[0] else 0)
-    contact_height.append(U_l[1]-R if F_l[0] >= U_l[0] >= H_l[0] else 0)
-    
-    if min(contact_height) > -0.09: return 0, 2
-    
-    contact_rim = np.argmin(contact_height)
-    
-    if contact_rim == 0:
-        return -np.pi/2 - np.arctan2(F_r[1]-U_r[1], F_r[0]-U_r[0]) + np.deg2rad(50), contact_rim
-    
-    if contact_rim == 1:
-        return -np.pi/2 - np.arctan2(G[1]-L_r[1], G[0]-L_r[0]), contact_rim
-    
-    if contact_rim == 2:
-        return 0, contact_rim
-    
-    if contact_rim == 3:
-        return -np.pi/2 - np.arctan2(G[1]-L_l[1], G[0]-L_l[0]), contact_rim
-    
-    if contact_rim == 4:
-        return -np.pi/2 - np.arctan2(F_l[1]-U_l[1], F_l[0]-U_l[0]) - np.deg2rad(50), contact_rim
-    
-    
+    contact_height.append(U_r[1]-R if F_l[0] - L_l[0] < eps and L_l[0] -   G[0] < eps else 0)
+    contact_height.append(U_r[1]-R if H_l[0] - U_l[0] < eps and U_l[0] - F_l[0] < eps else 0)
+
+    contact_rim = np.argmin(contact_height) if min(contact_height) < 0 else np.nan
+    if   contact_rim == 0: alpha = -np.pi/2 - np.arctan2(F_r[1]-U_r[1], F_r[0]-U_r[0]) + np.deg2rad(50)
+    elif contact_rim == 1: alpha = -np.pi/2 - np.arctan2(  G[1]-L_r[1],   G[0]-L_r[0])
+    elif contact_rim == 2: alpha = 0
+    elif contact_rim == 3: alpha = -np.pi/2 - np.arctan2(  G[1]-L_l[1],   G[0]-L_l[0])
+    elif contact_rim == 4: alpha = -np.pi/2 - np.arctan2(F_l[1]-U_l[1], F_l[0]-U_l[0]) - np.deg2rad(50)
+    else: alpha = np.nan
+
+    return alpha, contact_rim
+
+
 def get_jacobian(theta, beta, alpha):
     if alpha > np.deg2rad(50):
         print('Right Upper Rim')
-        P = rot_matrix(alpha-np.deg2rad(50)) @ np.array([Fx_poly-Ux_poly, Fy_poly-Uy_poly])
-        P += np.array([Ux_poly, Uy_poly])
-        
+        P = rot_matrix(alpha-np.deg2rad(50)) @ (F_poly-U_poly) + U_poly
     elif alpha > 0:
         print('Right Lower Rim')
-        P = rot_matrix(alpha) @ np.array([Gx_poly-Lx_poly, Gy_poly-Ly_poly])
-        P += np.array([Lx_poly, Ly_poly])
-        
+        P = rot_matrix(alpha) @ (G_poly-L_poly) + L_poly
+    elif alpha == 0:
+        print('G')
+        P = G_poly.copy()
     elif alpha < -np.deg2rad(50):
         print('Left Upper Rim')
-        P = rot_matrix(alpha+np.deg2rad(50)) @ np.array([-Fx_poly+Ux_poly, Fy_poly-Uy_poly])
-        P += np.array([-Ux_poly, Uy_poly])
-             
+        P = (-rot_matrix(alpha) @ (G_poly-L_poly) + L_poly) * np.array([-1, 1])
     elif alpha < 0:
         print('Left Lower Rim')
-        P = rot_matrix(alpha) @ np.array([-Gx_poly+Lx_poly, Gy_poly-Ly_poly])
-        P += np.array([-Lx_poly, Ly_poly])
+        P = (-rot_matrix(alpha+np.deg2rad(50)) @ (F_poly-U_poly) + U_poly) * np.array([-1, 1])
 
-    else:
-        print('G')
-        P = np.array([Gx_poly, Gy_poly])
-        
-    P_deriv = [P[0].deriv(), P[1].deriv()]
+    P_deriv = np.array([P[0].deriv(), P[1].deriv()])
     
     c_beta = np.cos(beta)
     s_beta = np.sin(beta)
@@ -111,32 +102,62 @@ def get_jacobian(theta, beta, alpha):
     P_deriv[0] = P_deriv[0](theta)
     P_deriv[1] = P_deriv[1](theta)
     
-    # print(c_beta, s_beta)
-    # print(P[0], P[1])
-    # print(P_deriv[0], P_deriv[1])
-    
-    jacobian = np.array([[( c_beta*P_deriv[0]-s_beta*P[0]-s_beta*P_deriv[1]-c_beta*P[1])/2,
-                          (-c_beta*P_deriv[0]-s_beta*P[0]+s_beta*P_deriv[1]-c_beta*P[1])/2],
-                         [( s_beta*P_deriv[0]+c_beta*P[0]+c_beta*P_deriv[1]-s_beta*P[1])/2,
-                          (-s_beta*P_deriv[0]+c_beta*P[0]-c_beta*P_deriv[1]-s_beta*P[1])/2]])
-    
-    # print(np.linalg.inv(jacobian).T)
+    jacobian = np.array([[-(c_beta*P_deriv[0]-s_beta*P_deriv[1])/2 + (-s_beta*P[0]-c_beta*P[1])/2,
+                           (c_beta*P_deriv[0]-s_beta*P_deriv[1])/2 + (-s_beta*P[0]-c_beta*P[1])/2],
+                         [-(s_beta*P_deriv[0]+c_beta*P_deriv[1])/2 +  (c_beta*P[0]-s_beta*P[1])/2,
+                           (s_beta*P_deriv[0]+c_beta*P_deriv[1])/2 +  (c_beta*P[0]-s_beta*P[1])/2]])
     
     return jacobian
+
+
+def get_link_force(theta, beta):
+    g = 9.81
+    
+    l12_acc = np.array([B_poly[0].deriv().deriv()(theta)/2, B_poly[1].deriv().deriv()(theta)/2 - g])
+
+    l4_acc = np.array([(D_poly[0].deriv().deriv()(theta) + C_poly[0].deriv().deriv()(theta))/2,
+                       (D_poly[1].deriv().deriv()(theta) + C_poly[1].deriv().deriv()(theta))/2 - g])
+    
+    l56_acc = np.array([(A_poly[0].deriv().deriv()(theta) + E_poly[0].deriv().deriv()(theta))/2,
+                        (A_poly[1].deriv().deriv()(theta) + E_poly[1].deriv().deriv()(theta))/2 - g])
+    
+    l37_acc = np.array([(H_poly[0].deriv().deriv()(theta) + F_poly[0].deriv().deriv()(theta))/2,
+                        (H_poly[1].deriv().deriv()(theta) + F_poly[1].deriv().deriv()(theta))/2 - g])
+    
+    l8_acc = np.array([(F_poly[0].deriv().deriv()(theta) + G_poly[0].deriv().deriv()(theta))/2,
+                       (F_poly[1].deriv().deriv()(theta) + G_poly[1].deriv().deriv()(theta))/2 - g])
+    
+    # force = 0.047*l12_acc + 0.014*l4_acc + 0.035*l56_acc + 0.112*l37_acc + 0.053*l8_acc
+    force = (0.047 + 0.014 + 0.035 + 0.112 + 0.053) * (-g)
+    
+    return force * 2
     
     
 if __name__ == '__main__':
-    phi = [0.017451007436321338, -0.01745099256500371]
-    trq = [2.286015621390786, -2.298943848634739]
     
-    theta = (phi[0] - phi[1]) / 2 + np.deg2rad(17)
-    beta = (phi[0] + phi[1]) / 2
+    # theta = 17
+    # beta = 0
     
-    alpha, contact_rim = get_alpha(theta, beta)
-    print(f'Theta = {round(np.rad2deg(theta), 4)}, Beta = {round(np.rad2deg(beta))}, Alpha = {round(np.rad2deg(alpha), 4)}')
+    phi = [2.1467545582716756,0.9948385065839167]
+    trq = [0.4216813456424418,-0.8329471439246547]
     
-    jacobian = get_jacobian(theta, beta, alpha)
+    theta = (phi[0]-phi[1])/2 + np.deg2rad(17)
+    beta = (phi[0]+phi[1])/2
     
-    force = np.linalg.inv(jacobian).T @ np.array(trq)
-    print(f'Force = [{round(force[0], 4)}, {round(force[1], 4)}]')
+    # theta=np.deg2rad(17)
+    # beta = np.pi/2
+    
+    alpha, contact_rim = get_alpha(theta=theta, beta=beta)
+    
+    print(f'Theta = {round(np.rad2deg(theta), 4)}; Beta = {round(np.rad2deg(beta), 4)}; Alpha = {round(np.rad2deg(alpha), 4)}, Contact Rim = {contact_rim}')
+    
+    jacobian = get_jacobian(theta=theta, beta=beta, alpha=alpha)
+    
+    action_force = np.linalg.inv(jacobian).T @ trq
+    
+    link_force = get_link_force(theta=theta, beta=beta)
+    
+    meas_force = action_force - link_force
+    
+    print(meas_force)
     
