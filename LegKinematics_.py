@@ -1,5 +1,8 @@
 import numpy as np
 from numpy.polynomial import Polynomial
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.animation import FuncAnimation
 
 # coefficients of all the points on the right plane
 A_x = [-1.129288648260761e-05, 0.08009403713692657, -0.0003107144391614336, -0.012797873528955785, -0.0005295870938277623, 0.0009747008204006224, -0.00010114551418980388, -3.968574387602764e-07]
@@ -64,7 +67,7 @@ def get_alpha(theta, beta):
     contact_height.append(G[1])
     contact_height.append(L_l[1]-R if F_l[0] - L_l[0] < eps and L_l[0] -   G[0] < eps else 0)
     contact_height.append(U_l[1]-R if H_l[0] - U_l[0] < eps and U_l[0] - F_l[0] < eps else 0)
-        
+    
     contact_rim = np.argmin(contact_height) if min(contact_height) < 0 else np.nan
 
     if   contact_rim == 0:
@@ -133,28 +136,65 @@ def get_jacobian(theta, beta, alpha):
 
 def get_link_force(enable):
     return np.array([0, (0.0145704*2 + 0.0364259*2 + 0.112321*2 + 0.052707*2 + 0.047 + 0.046)*9.81]) if enable else 0
-    
+
+
     
 if __name__ == '__main__':
-    '''
-    phi = [1.46677191235467,-1.4667719123209109]
-    trq = [2.7922063369220687,-2.79241478976431]
+    angles = [17, 45, 90, 135]
     
-    theta = (phi[0]-phi[1])/2 + np.deg2rad(17)
-    beta = -(phi[0]+phi[1])/2
-    
-    alpha, contact_rim = get_alpha(theta=theta, beta=beta)
-    
-    print(f'Theta = {round(np.rad2deg(theta), 4)}; Beta = {round(np.rad2deg(beta), 4)}; Alpha = {round(np.rad2deg(alpha), 4)}, Contact Rim = {contact_rim}')
-    
-    jacobian = get_jacobian(theta=theta, beta=beta, alpha=alpha)
-    
-    action_force = np.linalg.inv(jacobian).T @ trq
-    
-    link_force = 0 # get_link_force(theta=theta, beta=beta)
-    
-    meas_force = (action_force - link_force)
-    
-    print([meas_force[0], meas_force[1]])
-    '''
-    
+    # Create subplots
+    fig, axs = plt.subplots(2, 2, figsize=(12, 12))
+    axs = axs.flatten()
+
+    for i, theta_deg in enumerate(angles):
+        theta = np.deg2rad(theta_deg)
+        
+        # Evaluate the positions using the polynomial functions
+        A = [-A_poly[0](theta), A_poly[1](theta)]
+        B = [-B_poly[0](theta), B_poly[1](theta)]
+        C = [-C_poly[0](theta), C_poly[1](theta)]
+        D = [-D_poly[0](theta), D_poly[1](theta)]
+        E = [-E_poly[0](theta), E_poly[1](theta)]
+        F = [-F_poly[0](theta), F_poly[1](theta)]
+        G = [-G_poly[0](theta), G_poly[1](theta)]
+        H = [-H_poly[0](theta), H_poly[1](theta)]
+        U = [-U_poly[0](theta), U_poly[1](theta)]
+        L = [-L_poly[0](theta), L_poly[1](theta)]
+        
+        # Drawing lines and arcs
+        line_OA_l = patches.Polygon(([0,0], A), closed=False, edgecolor='blue', linewidth=2, label='OA_r')
+        line_AB_l = patches.Polygon((A, B), closed=False, edgecolor='blue', linewidth=2, label='AB_r')
+        line_AD_l = patches.Polygon((A, D), closed=False, edgecolor='blue', linewidth=2, label='AD_r')
+        line_DE_l = patches.Polygon((D, E), closed=False, edgecolor='blue', linewidth=2, label='DE_r')
+        line_DC_l = patches.Polygon((D, C), closed=False, edgecolor='blue', linewidth=2, label='DC_r')
+        
+        arc_HF_angle_l = np.array(F) - np.array(U)
+        arc_FG_angle_l = np.array(G) - np.array(L)
+        
+        arc_HF_l = patches.Arc(U, 2 * 0.1, 2 * 0.1, angle=np.rad2deg(np.arctan2(arc_HF_angle_l[1], arc_HF_angle_l[0])), 
+                               theta1=-np.rad2deg(np.deg2rad(130)), theta2=0, edgecolor='black', linewidth=2, label='Upper_Rim_l')
+        arc_FG_l = patches.Arc(L, 2 * 0.1, 2 * 0.1, angle=np.rad2deg(np.arctan2(arc_FG_angle_l[1], arc_FG_angle_l[0])), 
+                               theta1=-np.rad2deg(np.deg2rad(50)), theta2=0, edgecolor='black', linewidth=2, label='Lower_Rim_l')
+        
+        ax = axs[i]
+        ax.add_patch(line_OA_l)
+        ax.add_patch(line_AB_l)
+        ax.add_patch(line_AD_l)
+        ax.add_patch(line_DE_l)
+        ax.add_patch(line_DC_l)
+        ax.add_patch(arc_HF_l)
+        ax.add_patch(arc_FG_l)
+        
+        # Setting axis properties
+        ax.set_aspect('equal')
+        ax.set_xlim(-0.21, 0.21)
+        ax.set_ylim(-0.21, 0.21)
+        ax.set_xlabel('X-axis', fontsize=12)
+        ax.set_ylabel('Y-axis', fontsize=12)
+        ax.set_title(f'Leg Kinematics at {theta_deg}°', fontsize=14)
+        
+        ax.legend()
+        
+    plt.tight_layout()
+    plt.show()
+

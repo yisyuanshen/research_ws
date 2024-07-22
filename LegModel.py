@@ -140,7 +140,7 @@ class Leg:
     def draw(self, ax):
         ax.clear()
         
-        linewidth = 1.5
+        linewidth = 2
         
         line_OA_r = patches.Polygon((self.O, self.A_r), closed=False, edgecolor='blue', linewidth=linewidth, label='OA_r')
         line_AB_r = patches.Polygon((self.A_r, self.B_r), closed=False, edgecolor='blue', linewidth=linewidth, label='AB_r')
@@ -153,6 +153,8 @@ class Leg:
         line_AD_l = patches.Polygon((self.A_l, self.D_l), closed=False, edgecolor='blue', linewidth=linewidth, label='AD_l')
         line_DE_l = patches.Polygon((self.D_l, self.E),   closed=False, edgecolor='blue', linewidth=linewidth, label='DE_l')
         line_DC_l = patches.Polygon((self.D_l, self.C_l), closed=False, edgecolor='blue', linewidth=linewidth, label='DC_l')
+        
+        line_beta = patches.Polygon((-self.G*1.2, self.G*1.5), closed=False, edgecolor='orange', linewidth=linewidth, label='OG', linestyle='--')
         
         arc_HF_angle_r = self.F_r - self.U_r
         arc_FG_angle_r = self.G   - self.L_r
@@ -178,11 +180,37 @@ class Leg:
         arc_FG_l_outer = patches.Arc(self.L_l, 2 * (self.R + self.r), 2 * (self.R + self.r), angle=np.rad2deg(np.arctan2(arc_FG_angle_l[1], arc_FG_angle_l[0])), 
                                      theta1=-np.rad2deg(np.pi-self.n_HF), theta2=0, edgecolor='black', linewidth=linewidth, label='Lower_Rim_l')
         
+        arc_HF_r_inner = patches.Arc(self.U_r, 2 * (self.R - self.r), 2 * (self.R - self.r), angle=np.rad2deg(np.arctan2(arc_HF_angle_r[1], arc_HF_angle_r[0])), 
+                                     theta1=0, theta2=np.rad2deg(self.n_HF), edgecolor='red', linewidth=linewidth, label='Upper_Rim_r')
+        arc_FG_r_inner = patches.Arc(self.L_r, 2 * (self.R - self.r), 2 *(self.R - self.r), angle=np.rad2deg(np.arctan2(arc_FG_angle_r[1], arc_FG_angle_r[0])), 
+                                     theta1=0, theta2=np.rad2deg(np.pi-self.n_HF), edgecolor='black', linewidth=linewidth, label='Lower_Rim_r')
+        arc_HF_l_inner = patches.Arc(self.U_l, 2 * (self.R - self.r), 2 * (self.R - self.r), angle=np.rad2deg(np.arctan2(arc_HF_angle_l[1], arc_HF_angle_l[0])), 
+                                     theta1=-np.rad2deg(self.n_HF), theta2=0, edgecolor='red', linewidth=linewidth, label='Upper_Rim_l')
+        arc_FG_l_inner = patches.Arc(self.L_l, 2 * (self.R - self.r), 2 * (self.R - self.r), angle=np.rad2deg(np.arctan2(arc_FG_angle_l[1], arc_FG_angle_l[0])), 
+                                     theta1=-np.rad2deg(np.pi-self.n_HF), theta2=0, edgecolor='black', linewidth=linewidth, label='Lower_Rim_l')
+        
+        
         arc_G_outer = patches.Arc(self.G, 2 * self.r, 2 * self.r, angle=np.rad2deg(np.arctan2(self.G[1], self.G[0])), 
                                      theta1=-angle_G-0.001, theta2=angle_G+0.001, edgecolor='red', linewidth=linewidth, label='Arc G')
 
         # create end point G
+        circle_F_r = patches.Circle(self.F_r, self.r, edgecolor='green', linewidth=linewidth, facecolor='none', label='F_r')
+        circle_F_l = patches.Circle(self.F_l, self.r, edgecolor='green', linewidth=linewidth, facecolor='none', label='F_l')
         circle_G = patches.Circle(self.G, self.r, edgecolor='green', linewidth=linewidth, facecolor='none', label='G')
+
+        # axis
+        ax.annotate('', xy=(0.2, 0), xytext=(-0.2, 0), arrowprops=dict(facecolor='gray', edgecolor='gray', shrink=0.0, width=0.5))
+        ax.annotate('', xy=(0, 0.2), xytext=(0, -0.2), arrowprops=dict(facecolor='gray', edgecolor='gray', shrink=0.0, width=0.5))
+        
+        # angle labels
+        arrow_beta = patches.FancyArrowPatch((0, 0.12), (-self.G/np.linalg.norm(self.G)*0.12), connectionstyle=f"arc3,rad=0.12", facecolor='gray', edgecolor='gray', linewidth=linewidth*1.5, arrowstyle="-|>", mutation_scale=20)
+        arrow_theta = patches.FancyArrowPatch((-self.G/np.linalg.norm(self.G)*0.07), (self.B_l/np.linalg.norm(self.B_l)*0.07), connectionstyle=f"arc3,rad=0.2", facecolor='gray', edgecolor='gray', linewidth=linewidth*1.5, arrowstyle="-|>", mutation_scale=20)
+        arrow_phi_r = patches.FancyArrowPatch((0, 0.05), (self.B_r/np.linalg.norm(self.B_r)*0.05), connectionstyle=f"arc3,rad=-0.2", facecolor='gray', edgecolor='gray', linewidth=linewidth*1.5, arrowstyle="-|>", mutation_scale=20)
+        arrow_phi_l = patches.FancyArrowPatch((0, 0.05), (self.B_l/np.linalg.norm(self.B_l)*0.05), connectionstyle=f"arc3,rad=0.22", facecolor='gray', edgecolor='gray', linewidth=linewidth*1.5, arrowstyle="-|>", mutation_scale=20)
+
+        arrow_contact_r = patches.FancyArrowPatch((0.005, -0.12), (self.F_r/np.linalg.norm(self.F_r)*0.12), connectionstyle=f"arc3,rad=0.24", facecolor='gray', edgecolor='gray', linewidth=linewidth*3, arrowstyle="-|>", mutation_scale=50)
+        arrow_contact_l = patches.FancyArrowPatch((-0.005, -0.12), (self.F_l/np.linalg.norm(self.F_l)*0.12), connectionstyle=f"arc3,rad=-0.24", facecolor='gray', edgecolor='gray', linewidth=linewidth*3, arrowstyle="-|>", mutation_scale=50)
+        
         
         # Add all elements
         ax.add_patch(line_OA_r)
@@ -196,20 +224,36 @@ class Leg:
         ax.add_patch(line_AD_l)
         ax.add_patch(line_DE_l)
         ax.add_patch(line_DC_l)
-            
+        
+        ax.add_patch(line_beta)
+        
         ax.add_patch(arc_HF_r)
         ax.add_patch(arc_FG_r)
         ax.add_patch(arc_HF_l)
         ax.add_patch(arc_FG_l)
         
-        ax.add_patch(arc_HF_r_outer)
-        ax.add_patch(arc_FG_r_outer)
-        ax.add_patch(arc_HF_l_outer)
-        ax.add_patch(arc_FG_l_outer)
+        # ax.add_patch(arc_HF_r_inner)
+        # ax.add_patch(arc_FG_r_inner)
+        # ax.add_patch(arc_HF_l_inner)
+        # ax.add_patch(arc_FG_l_inner)
         
+        # ax.add_patch(arc_HF_r_outer)
+        # ax.add_patch(arc_FG_r_outer)
+        # ax.add_patch(arc_HF_l_outer)
+        # ax.add_patch(arc_FG_l_outer)
+        
+        # ax.add_patch(circle_F_r)
+        # ax.add_patch(circle_F_l)
         # ax.add_patch(circle_G)
-        ax.add_patch(arc_G_outer)
+        # ax.add_patch(arc_G_outer)
         
+        # ax.add_patch(arrow_beta)
+        # ax.add_patch(arrow_theta)
+        # ax.add_patch(arrow_phi_r)
+        # ax.add_patch(arrow_phi_l)
+        
+        # ax.add_patch(arrow_contact_r)
+        # ax.add_patch(arrow_contact_l)
         
         # Setup the ax
         ax.set_aspect('equal')
