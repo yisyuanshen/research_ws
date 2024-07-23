@@ -20,7 +20,7 @@ robot_data_path = f'{os.getcwd()}/data/real/robot/motor/0722_3.csv'
 force_data_path = f'{os.getcwd()}/data/real/robot/force/_0722_3.csv'
 
 df_robot_data = pd.read_csv(robot_data_path)
-df_force_data = pd.read_csv(force_data_path).iloc[8732:, :] # 3440 # 8732 # 7476
+df_force_data = pd.read_csv(force_data_path).iloc[7476:, :] # 3440 # 8732 # 7476
 
 t = []
 f_est = []
@@ -57,8 +57,6 @@ for idx in range(min(df_force_data.__len__(), df_robot_data.__len__())):
     # f_est.append(total_force)
     # f_meas.append([0, -force_data['Fz_2']])
     
-    # data_test.append(trq)
-    
     force_list = []
     for i in range(4):
         theta = (phi_list[i][0]-phi_list[i][1])/2 + np.deg2rad(17)
@@ -69,7 +67,7 @@ for idx in range(min(df_force_data.__len__(), df_robot_data.__len__())):
         
         jacobian = LegKinematics.get_jacobian(theta=theta, beta=beta, alpha=alpha)
     
-        action_force = np.linalg.inv(jacobian).T @ trq_list[i]
+        action_force = np.linalg.pinv(jacobian).T @ trq_list[i]
         link_force = LegKinematics.get_link_force(1)
 
         force_list.append(action_force+link_force)
@@ -83,7 +81,7 @@ for idx in range(min(df_force_data.__len__(), df_robot_data.__len__())):
         P = [P[0](theta), P[1](theta)]
         P_deriv = [P_deriv[0](theta), P_deriv[1](theta)]
     
-    data_test.append(trq_list)
+    data_test.append(phi_list)
     
     t.append(idx)
     f_est.append(force_list)
@@ -98,7 +96,7 @@ f_meas = np.array(f_meas)
 data_test = np.array(data_test)
 
 # filter parameters
-cutoff_frequency = 5.0
+cutoff_frequency = 3.0
 sampling_frequency = 1000.0
 filter_order = 4
 

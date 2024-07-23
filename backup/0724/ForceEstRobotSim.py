@@ -16,8 +16,8 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
 
 plot_all = False
 enable_link_force = True
-robot_data_path = f'{os.getcwd()}/data/test_/robot.csv'
-force_data_path = f'{os.getcwd()}/data/test_/Force Plate.csv'
+robot_data_path = f'{os.getcwd()}/data/test/robot.csv'
+force_data_path = f'{os.getcwd()}/data/test/Force Plate.csv'
 
 
 df_robot_data = pd.read_csv(robot_data_path)
