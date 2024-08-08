@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.polynomial import Polynomial
+import matplotlib.pyplot as plt
 
 # coefficients of all the points on the right plane
 A_x = [-1.129288648260761e-05, 0.08009403713692657, -0.0003107144391614336, -0.012797873528955785, -0.0005295870938277623, 0.0009747008204006224, -0.00010114551418980388, -3.968574387602764e-07]
@@ -87,7 +88,7 @@ def get_alpha(theta, beta):
         if alpha > 0: alpha -= np.pi * 2
         
     else:
-        alpha = np.nan
+        return None, None
 
     return alpha, contact_rim
 
@@ -158,3 +159,38 @@ if __name__ == '__main__':
     print([meas_force[0], meas_force[1]])
     '''
     
+        # Validate Jacobian Calculation
+    theta_values = np.linspace(np.deg2rad(17), np.deg2rad(160), 1000)
+    beta_values = np.linspace(np.deg2rad(-180), np.deg2rad(180), 1000)
+    
+    # Initialize the determinant matrix
+    determinants = np.zeros((len(theta_values), len(beta_values)))
+
+    # Calculate determinants
+    for i, theta in enumerate(theta_values):
+        for j, beta in enumerate(beta_values):
+            alpha, contact_rim = get_alpha(theta=theta, beta=beta)
+            
+            print(f'Theta = {round(np.rad2deg(theta), 4)}; Beta = {round(np.rad2deg(beta), 4)}')
+            
+            if alpha is None:
+                determinants[i, j] = np.inf
+            else:
+                jacobian = get_jacobian(theta=theta, beta=beta, alpha=alpha)
+                det = np.linalg.det(jacobian)
+                determinants[i, j] = det
+    
+    # Plotting
+    plt.figure(figsize=(10, 5))
+    plt.imshow(determinants, extent=[-180, 180, 160, 17], aspect='auto', cmap=plt.cm.jet)
+    
+    cbar = plt.colorbar()
+    cbar.ax.tick_params(labelsize=20)
+    cbar.set_label('Determinant of Jacobian', size=24)
+    
+    plt.xlabel('Beta (degrees)', fontsize=24)
+    plt.ylabel('Theta (degrees)', fontsize=24)
+    plt.tick_params(labelsize=20)
+    plt.title('Determinant of the Jacobian Matrix', fontsize=28)
+    plt.gca().invert_yaxis()
+    plt.show()
