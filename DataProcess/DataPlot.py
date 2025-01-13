@@ -14,21 +14,21 @@ def butter_lowpass_filter(raw_data, cutoff, fs, order=5):
 
 #%%
 filefolder = 'corgi_ws/corgi_ros_ws/output_data'
-filename = 'TEST.csv'
+filename = '3.csv'
 
 filepath = os.path.join(os.getenv('HOME'), filefolder, filename)
 
-start_idx = 0
-end_idx = -1
+start_idx = 2000
+end_idx = 6000
 
 df_data = pd.read_csv(filepath)
 
 #%%
 target_columns = [['imp_cmd_theta_a', 'cmd_theta_a', 'state_theta_a'],
-                  ['force_Fy_a']]
+                  ['imp_cmd_Fy_a', 'force_Fy_a']]
 
 line_labels = [['Theta Imp Cmd', 'Theta Motor Cmd', 'Theta State'],
-               ['Force Y']]
+               ['Force Imp Cmd', 'Force State']]
 
 xy_labels = [['Time (ms)', 'Theta (rad)'],
              ['Time (ms)', 'Force (N)']]
@@ -38,7 +38,7 @@ titles = ['Theta',
 
 data = [df_data[col].to_numpy()[start_idx:end_idx, :].T for col in target_columns]
 
-data[1][0] = butter_lowpass_filter(data[1][0], cutoff=10, fs=1000, order=5)
+# data[1][0] = butter_lowpass_filter(data[1][0], cutoff=100, fs=1000, order=5)
 
 #%%
 fig_row = 2
@@ -54,10 +54,13 @@ axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][0], label=line_l
 axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][1], label=line_labels[fig_idx][1], linewidth=1.5, linestyle='--', color='blue')
 axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][2], label=line_labels[fig_idx][2], linewidth=1.5, linestyle='-.', color='green')
 axes[fig_idx].legend(fontsize=10, loc='lower right', frameon=True, shadow=True, facecolor='white', edgecolor='black')
+axes[fig_idx].set_ylim(0.9, 1.1)
 
 fig_idx = 1
-axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][0], label=line_labels[fig_idx][0], linewidth=1.5, linestyle=':', color='black')
+axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][0], label=line_labels[fig_idx][0], linewidth=1.5, linestyle='-', color='red')
+axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][1], label=line_labels[fig_idx][1], linewidth=1.5, linestyle='--', color='black')
 axes[fig_idx].legend(fontsize=10, loc='lower right', frameon=True, shadow=True, facecolor='white', edgecolor='black')
+axes[fig_idx].set_ylim(-120, 20)
 
 for fig_idx in range(len(axes)):
     axes[fig_idx].set_title(titles[fig_idx], fontsize=14)
