@@ -1,0 +1,84 @@
+{
+    "force_all":{
+        "fig_row": 2,
+        "fig_col": 2,
+
+        "target_columns": [["imp_cmd_Fy_a", "force_Fy_a"],
+                           ["imp_cmd_Fy_b", "force_Fy_b"],
+                           ["imp_cmd_Fy_c", "force_Fy_c"],
+                           ["imp_cmd_Fy_d", "force_Fy_d"]],
+
+        "line_labels": [["Force Imp Cmd", "Force State"],
+                        ["Force Imp Cmd", "Force State"],
+                        ["Force Imp Cmd", "Force State"],
+                        ["Force Imp Cmd", "Force State"]],
+
+        "xy_labels": [["Time (ms)", "Force (N)"],
+                      ["Time (ms)", "Force (N)"],
+                      ["Time (ms)", "Force (N)"],
+                      ["Time (ms)", "Force (N)"]],
+       
+        "titles": ["Force A",
+                   "Force B",
+                   "Force C",
+                   "Force D"],
+           
+        "line_styles": [["-", "--"],
+                        ["-", "--"],
+                        ["-", "--"],
+                        ["-", "--"]],
+       
+        "colors" : [["red", "blue"],
+                    ["red", "blue"],
+                    ["red", "blue"],
+                    ["red", "blue"]],
+           
+        "ylims" : [[-120, 20],
+                   [-120, 20],
+                   [-120, 20],
+                   [-120, 20]]
+    },
+    "force_A":{
+        "fig_row": 2,
+        "fig_col": 1,
+
+        "target_columns": [["imp_cmd_theta_a", "state_theta_a"],
+                           ["imp_cmd_Fy_a", "force_Fy_a"]],
+
+        "line_labels": [["Theta Imp Cmd", "Theta State"],
+                        ["Force Imp Cmd", "Force State"]],
+
+        "xy_labels": [["Time (ms)", "Theta (rad)"],
+                      ["Time (ms)", "Force (N)"]],
+       
+        "titles": ["Theta",
+                   "Force"],
+           
+        "line_styles": [["-", "--"],
+                        ["-", "--"]],
+       
+        "colors" : [["black", "green"],
+                    ["red", "blue"]],
+           
+        "ylims" : [[0, 0],
+                   [0, 0]]
+    },
+    "":{
+        "fig_row": 0,
+        "fig_col": 0,
+
+        "target_columns": [[""]],
+
+        "line_labels": [[""]],
+
+        "xy_labels": [[""]],
+       
+        "titles": [""],
+           
+        "line_styles": [["-"]],
+       
+        "colors" : [[""]],
+           
+        "ylims" : [[0, 0]]
+    }
+}

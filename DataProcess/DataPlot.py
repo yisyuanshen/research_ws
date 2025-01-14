@@ -1,4 +1,5 @@
 import os
+import json
 import pandas as pd
 import numpy as np
 from scipy.signal import butter, lfilter
@@ -14,53 +15,78 @@ def butter_lowpass_filter(raw_data, cutoff, fs, order=5):
 
 #%%
 filefolder = 'corgi_ws/corgi_ros_ws/output_data'
-filename = '3.csv'
+filename = 'test.csv'
 
-filepath = os.path.join(os.getenv('HOME'), filefolder, filename)
-
-start_idx = 2000
+start_idx = 4000
 end_idx = 6000
 
+#%%
+load_config = False
+config_name = 'force_all'
+set_ylim = False
+
+if not load_config:
+    config = {
+        "fig_row": 2,
+        "fig_col": 1,
+
+        "target_columns": [["imp_cmd_theta_a", "state_theta_a"],
+                           ["imp_cmd_Fy_a", "force_Fy_a"]],
+
+        "line_labels": [["Theta Imp Cmd", "Theta State"],
+                        ["Force Imp Cmd", "Force State"]],
+
+        "xy_labels": [["Time (ms)", "Theta (rad)"],
+                      ["Time (ms)", "Force (N)"]],
+       
+        "titles": ["Theta",
+                   "Force"],
+           
+        "line_styles": [["-", "--"],
+                        ["-", "--"]],
+       
+        "colors" : [["black", "green"],
+                    ["red", "blue"]],
+           
+        "ylims" : [[0, 0],
+                   [0, 0]]}
+    
+else:
+    with open(os.path.join(os.getcwd(), 'DataProcess', 'PlotConfig.json'), 'r') as file:
+        config = json.load(file)[config_name]
+
+
+
+filepath = os.path.join(os.getenv('HOME'), filefolder, filename)
 df_data = pd.read_csv(filepath)
 
-#%%
-target_columns = [['imp_cmd_theta_a', 'cmd_theta_a', 'state_theta_a'],
-                  ['imp_cmd_Fy_a', 'force_Fy_a']]
-
-line_labels = [['Theta Imp Cmd', 'Theta Motor Cmd', 'Theta State'],
-               ['Force Imp Cmd', 'Force State']]
-
-xy_labels = [['Time (ms)', 'Theta (rad)'],
-             ['Time (ms)', 'Force (N)']]
-
-titles = ['Theta',
-          'Force']
+fig_row = config['fig_row']
+fig_col = config['fig_col']
+target_columns = config['target_columns']
+line_labels = config['line_labels']
+xy_labels = config['xy_labels']
+titles = config['titles']
+line_styles = config['line_styles']
+colors = config['colors']
+ylims = config['ylims']
 
 data = [df_data[col].to_numpy()[start_idx:end_idx, :].T for col in target_columns]
 
 # data[1][0] = butter_lowpass_filter(data[1][0], cutoff=100, fs=1000, order=5)
 
 #%%
-fig_row = 2
-fig_col = 1
-
 fig = plt.figure(figsize=(12, 8))
 gs = GridSpec(fig_row, fig_col, figure=fig)
 
 axes = [fig.add_subplot(gs[row, col]) for row in range(fig_row) for col in range(fig_col)]
 
-fig_idx = 0
-axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][0], label=line_labels[fig_idx][0], linewidth=1.5, linestyle='-',  color='red')
-axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][1], label=line_labels[fig_idx][1], linewidth=1.5, linestyle='--', color='blue')
-axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][2], label=line_labels[fig_idx][2], linewidth=1.5, linestyle='-.', color='green')
-axes[fig_idx].legend(fontsize=10, loc='lower right', frameon=True, shadow=True, facecolor='white', edgecolor='black')
-axes[fig_idx].set_ylim(0.9, 1.1)
+linewidth = 1.5
 
-fig_idx = 1
-axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][0], label=line_labels[fig_idx][0], linewidth=1.5, linestyle='-', color='red')
-axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][1], label=line_labels[fig_idx][1], linewidth=1.5, linestyle='--', color='black')
-axes[fig_idx].legend(fontsize=10, loc='lower right', frameon=True, shadow=True, facecolor='white', edgecolor='black')
-axes[fig_idx].set_ylim(-120, 20)
+for fig_idx in range(fig_row*fig_col):
+    for data_idx in range(len(data[fig_idx])):
+        axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][data_idx], label=line_labels[fig_idx][data_idx], linewidth=linewidth, linestyle=line_styles[fig_idx][data_idx],  color=colors[fig_idx][data_idx])
+        axes[fig_idx].legend(fontsize=10, loc='best', frameon=True, shadow=True, facecolor='white', edgecolor='black')
+        if set_ylim: axes[fig_idx].set_ylim(ylims[data_idx])
 
 for fig_idx in range(len(axes)):
     axes[fig_idx].set_title(titles[fig_idx], fontsize=14)
