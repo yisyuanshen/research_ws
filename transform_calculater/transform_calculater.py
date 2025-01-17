@@ -3,6 +3,8 @@ import pandas as pd
 import LegModel
 from bezier import swing
 
+import sys
+# sys.path.append()
 
 #%% Define Functions
 def find_closest_beta(target_beta, ref_beta):
