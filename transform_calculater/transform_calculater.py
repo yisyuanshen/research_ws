@@ -34,8 +34,8 @@ def find_hybrid_step(RH_beta, LH_beta, body_angle):
     min_step_length = 0.1
     max_step_length = 0.2
     
-    RH_target_beta = find_smaller_closest_beta(np.deg2rad(75)-body_angle, RH_beta)
-    LH_target_beta = find_smaller_closest_beta(np.deg2rad(75)-body_angle, LH_beta)
+    RH_target_beta = find_smaller_closest_beta(np.deg2rad(55)-body_angle, RH_beta)
+    LH_target_beta = find_smaller_closest_beta(np.deg2rad(55)-body_angle, LH_beta)
     
     for i in range(max_step_num):
         # calculate step length and check if it is valid
@@ -57,16 +57,18 @@ print('= = =')
 
 
 #%% User Parameters
-init_beta = np.deg2rad(np.random.randint(0, 360, size=4))  # rad
+# init_beta = np.deg2rad(np.random.randint(0, 360, size=4))  # rad
+init_beta = np.deg2rad([75, 150, 225, 300])  # rad
 init_theta = np.deg2rad([17, 17, 17, 17])  # rad
+sim = False
 
 last_transform_step_x = 0.15  # x-direction position of the last transfromed leg
 
-body_vel = 0.2  # m/s
+body_vel = 0.1  # m/s
 stance_height = 0.2  # m (currently, only 0.2 is available)
 
 #%% Initialization
-leg = LegModel.LegModel(sim=True)
+leg = LegModel.LegModel(sim=sim)
 body_length = 0.444  # m
 dt = 0.001  # s
 
@@ -228,7 +230,7 @@ print('= = =')
 
 #%% Hind Transform
 # ensure the robot stability
-body_move_dist = leg.radius * np.deg2rad(30)
+body_move_dist = leg.radius * np.deg2rad(10)
 delta_time_step = int(round(body_move_dist/body_vel, 3)/dt)
 
 LF_target_theta_traj = []
@@ -414,4 +416,4 @@ traj_final = np.column_stack([traj_theta_final[:, 0], -traj_beta_final[:, 0],
                               traj_theta_final[:, 2],  traj_beta_final[:, 2],
                               traj_theta_final[:, 3], -traj_beta_final[:, 3]])
 
-pd.DataFrame(traj_final).to_csv('traj.csv', header=False, index=False)
+pd.DataFrame(traj_final).to_csv('transform_trajectory.csv', header=False, index=False)
