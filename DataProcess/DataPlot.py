@@ -17,53 +17,43 @@ def butter_lowpass_filter(raw_data, cutoff, fs, order=5):
 
 #%%
 filefolder = 'corgi_ws/corgi_ros_ws/output_data'
-filename = 'test.csv'
+# filefolder = 'research_ws/data'
+filename = 'test_8.csv'
 
-start_idx = 500
+start_idx = 100
 end_idx = -1
 
 #%%
 load_config = True
-config_name = 'eta_force_A'  # force_all force_A eta_force_A
+config_name = 'force_A'  # force_all force_A eta_force_A
 set_ylim = False
 
 if not load_config:
     config = {
         "fig_row": 2,
-        "fig_col": 2,
+        "fig_col": 1,
 
-        "target_columns": [["imp_cmd_theta_a", "state_theta_a"],
-                           ["imp_cmd_beta_a", "state_beta_a"],
-                           ["imp_cmd_Fx_a", "force_Fx_a"],
-                           ["imp_cmd_Fy_a", "force_Fy_a"]],
+        "target_columns": [["force_Fx_a", "force_Fx_b", "force_Fx_c", "force_Fx_d"],
+                           ["force_Fy_a", "force_Fy_b", "force_Fy_c", "force_Fy_d"]],
 
-        "line_labels": [["Theta Imp Cmd", "Theta State"],
-                        ["Beta Imp Cmd", "Beta State"],
-                        ["Force X Imp Cmd", "Force X State"],
-                        ["Force Y Imp Cmd", "Force Y State"]],
+        "line_labels": [["force_Fx_a", "force_Fx_b", "force_Fx_c", "force_Fx_d"],
+                        ["force_Fy_a", "force_Fy_b", "force_Fy_c", "force_Fy_d"]],
 
-        "xy_labels": [["Time (ms)", "Theta (rad)"],
-                      ["Time (ms)", "Beta (rad)"],
-                      ["Time (ms)", "Force X (N)"],
-                      ["Time (ms)", "Force Y (N)"]],
+        "xy_labels": [["Time (ms)", "Force (N)"],
+                      ["Time (ms)", "Force (N)"],
+                      ["Time (ms)", "Force (N)"]],
        
-        "titles": ["Theta",
-                   "Beta",
-                   "Force X",
+        "titles": ["Force X",
                    "Force Y"],
            
-        "line_styles": [["-", "--"],
-                        ["-", "--"],
-                        ["-", "--"],
-                        ["-", "--"]],
+        "line_styles": [["-", "--", "-.", ":"],
+                        ["-", "--", "-.", ":"]],
        
-        "colors" : [["black", "green"],
-                    ["black", "green"],
-                    ["red", "blue"],
-                    ["red", "blue"]],
+        "colors" : [["black", "green", "red", "blue"],
+                    ["black", "green", "red", "blue"]],
            
-        "ylims" : [[0, 1.5],
-                   [-120, 10]]
+        "ylims" : [[0, 0],
+                   [0, 0]]
         }
     
 else:
@@ -87,11 +77,16 @@ ylims = config['ylims']
 
 data = [df_data[col].to_numpy()[start_idx:end_idx, :].T for col in target_columns]
 
+# data[1] %= np.pi*2
 
-
-# data[1][0] = butter_lowpass_filter(data[1][1], cutoff=100, fs=1000, order=5)
-# data[0][0] -= data[0][1]
+# for i in range(4):
+#     data[0][i] = butter_lowpass_filter(data[0][i], cutoff=10, fs=1000, order=5)
+#     data[1][i] = butter_lowpass_filter(data[1][i], cutoff=10, fs=1000, order=5)
+# data[0][0] = data[0][0][0]
 # data[0][1] -= data[0][1]
+# data[1][0] -= data[1][1]
+# data[1][1] -= data[1][1]
+
 
 #%%
 fig = plt.figure(figsize=(8, 6))
