@@ -212,21 +212,21 @@ class Leg:
         ax.annotate('', xy=(0, 0.19), xytext=(0, -0.19), arrowprops=dict(facecolor='gray', edgecolor='gray', shrink=0.0, width=0.5, zorder=1))
         
         # labels
-        arrow_contact_r = patches.FancyArrowPatch((0.005, -0.15), (self.F_r/np.linalg.norm(self.F_r)*0.15), connectionstyle=f"arc3,rad=0.24", facecolor='orange', edgecolor='orange', linewidth=linewidth*1.5, arrowstyle="-|>", mutation_scale=20)
-        arrow_contact_l = patches.FancyArrowPatch((-0.005, -0.15), (self.F_l/np.linalg.norm(self.F_l)*0.15), connectionstyle=f"arc3,rad=-0.24", facecolor='orange', edgecolor='orange', linewidth=linewidth*1.5, arrowstyle="-|>", mutation_scale=20)
+        arrow_contact_r = patches.FancyArrowPatch((0.005, -0.15), (self.F_r/np.linalg.norm(self.F_r)*0.15), connectionstyle=f"arc3,rad=0.24", facecolor='orange', edgecolor='orange', linewidth=linewidth*1.5, linestyle='-', arrowstyle="->", mutation_scale=20)
+        arrow_contact_l = patches.FancyArrowPatch((-0.005, -0.15), (self.F_l/np.linalg.norm(self.F_l)*0.15), connectionstyle=f"arc3,rad=-0.24", facecolor='orange', edgecolor='orange', linewidth=linewidth*1.5, linestyle='-', arrowstyle="->", mutation_scale=20)
         
         circle_alpha_0 = patches.Circle((0, -self.R-self.r), 0.004, edgecolor='indigo', linewidth=linewidth, facecolor='indigo', label='', zorder=10)
         circle_alpha_60 = patches.Circle(((self.R+self.r)*np.cos(np.pi/6), -(self.R+self.r)*np.sin(np.pi/6)), 0.004, edgecolor='indigo', linewidth=linewidth, facecolor='indigo', label='', zorder=10)
         circle_alpha_90 = patches.Circle((-self.R-self.r, 0), 0.004, edgecolor='indigo', linewidth=linewidth, facecolor='indigo', label='', zorder=10)
         circle_alpha_120 = patches.Circle(((self.R+self.r)*np.cos(np.pi/6), (self.R+self.r)*np.sin(np.pi/6)), 0.004, edgecolor='indigo', linewidth=linewidth, facecolor='indigo', label='', zorder=10)
         
-        '''
+        # '''
         # TB = (17, 0)
         ax.text( 0.120, -0.130, r'$+\alpha$', ha='center', va='center')
         ax.text(-0.120, -0.130, r'$-\alpha$', ha='center', va='center')
         ax.text( 0.006, -0.130, r'$\alpha=0$', ha='center', va='center')
         ax.text( 0.135, -0.060, r'$\displaystyle \alpha=\frac{\pi}{3}$', ha='center', va='center')
-        ax.text( -0.150, 0.020, r'$\displaystyle \alpha=\frac{\pi}{2}$', ha='center', va='center')
+        ax.text( -0.150, 0.020, r'$\displaystyle \alpha=\frac{-\pi}{2}$', ha='center', va='center')
         ax.text( 0.135,  0.055, r'$\displaystyle \alpha=\frac{2\pi}{3}$', ha='center', va='center')
         # '''
         
@@ -289,12 +289,12 @@ class Leg:
         # ax.add_patch(arc_G_outer)
         
         
-        # ax.add_patch(arrow_contact_r)
-        # ax.add_patch(arrow_contact_l)
-        # ax.add_patch(circle_alpha_0)
-        # ax.add_patch(circle_alpha_60)
-        # ax.add_patch(circle_alpha_90)
-        # ax.add_patch(circle_alpha_120)
+        ax.add_patch(arrow_contact_r)
+        ax.add_patch(arrow_contact_l)
+        ax.add_patch(circle_alpha_0)
+        ax.add_patch(circle_alpha_60)
+        ax.add_patch(circle_alpha_90)
+        ax.add_patch(circle_alpha_120)
         
         # '''
         # ax.add_patch(line_UH_l)
@@ -328,14 +328,14 @@ class Leg:
         
         
     def plot_once(self):
-        # plt.rc('text', usetex=True)
-        # plt.rc('text.latex', preamble=r'\usepackage{mathptmx}')
-        # plt.rcParams.update({'font.size': 11})
-        # plt.rcParams['font.family'] = 'DeJavu Serif'
-        # plt.rcParams['font.serif'] = ['Times New Roman']
+        plt.rc('text', usetex=True)
+        plt.rc('text.latex', preamble=r'\usepackage{mathptmx}')
+        plt.rcParams.update({'font.size': 11})
+        plt.rcParams['font.family'] = 'DeJavu Serif'
+        plt.rcParams['font.serif'] = ['Times New Roman']
         fig, ax = plt.subplots()
         self.draw(ax)
-        # plt.savefig('LegPlot.pdf', format='pdf', bbox_inches='tight')
+        plt.savefig('LegPlot.pdf', format='pdf', bbox_inches='tight')
         plt.show()
         
         
@@ -358,8 +358,8 @@ class Leg:
 if __name__ == '__main__':
     leg = Leg()
     
-    theta = 45
-    beta = 45
+    theta = 17
+    beta = 0
     
     leg.set_tb(theta=np.deg2rad(theta), beta=np.deg2rad(beta))
     
