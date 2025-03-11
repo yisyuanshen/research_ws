@@ -1,5 +1,5 @@
 {
-    "force_sim":{
+    "force_sim_y":{
         "figure": {
             "rows": 2,
             "cols": 2,
@@ -13,7 +13,7 @@
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
                 "colors": ["red", "blue"],
-                "ylims": [-200, 100]
+                "ylims": [-120, 20]
             },
             {
                 "title": "Force B",
@@ -22,7 +22,7 @@
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
                 "colors": ["red", "blue"],
-                "ylims": [-200, 100]
+                "ylims": [-120, 20]
             },
             {
                 "title": "Force C",
@@ -31,7 +31,7 @@
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
                 "colors": ["red", "blue"],
-                "ylims": [-200, 100]
+                "ylims": [-120, 20]
             },
             {
                 "title": "Force D",
@@ -40,7 +40,187 @@
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
                 "colors": ["red", "blue"],
-                "ylims": [-200, 100]
+                "ylims": [-120, 20]
+            }
+        ]
+    },
+    "force_sim_x":{
+        "figure": {
+            "rows": 2,
+            "cols": 2,
+            "size": [8, 6]
+        },
+        "plots": [
+            {
+                "title": "Force A",
+                "data": ["imp_cmd_Fx_a", "force_Fx_a"],
+                "labels": ["Commanded", "Estimation"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-120, 20]
+            },
+            {
+                "title": "Force B",
+                "data": ["imp_cmd_Fx_b", "force_Fx_b"],
+                "labels": ["Commanded", "Estimation"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-120, 20]
+            },
+            {
+                "title": "Force C",
+                "data": ["imp_cmd_Fx_c", "force_Fx_c"],
+                "labels": ["Commanded", "Estimation"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-120, 20]
+            },
+            {
+                "title": "Force D",
+                "data": ["imp_cmd_Fx_d", "force_Fx_d"],
+                "labels": ["Commanded", "Estimation"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-120, 20]
+            }
+        ]
+    },
+    "force_real_y":{
+        "figure": {
+            "rows": 2,
+            "cols": 2,
+            "size": [8, 6]
+        },
+        "plots": [
+            {
+                "title": "Force A",
+                "data": ["imp_cmd_Fy_a", "force_Fy_a", "Fz_1"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            },
+            {
+                "title": "Force B",
+                "data": ["imp_cmd_Fy_b", "force_Fy_b", "Fz_4"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            },
+            {
+                "title": "Force C",
+                "data": ["imp_cmd_Fy_c", "force_Fy_c", "Fz_3"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            },
+            {
+                "title": "Force D",
+                "data": ["imp_cmd_Fy_d", "force_Fy_d", "Fz_2"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            }
+        ]
+    },
+    "force_real_x":{
+        "figure": {
+            "rows": 2,
+            "cols": 2,
+            "size": [8, 6]
+        },
+        "plots": [
+            {
+                "title": "Force A",
+                "data": ["imp_cmd_Fx_a", "force_Fx_a", "Fx_1"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            },
+            {
+                "title": "Force B",
+                "data": ["imp_cmd_Fx_b", "force_Fx_b", "Fx_4"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            },
+            {
+                "title": "Force C",
+                "data": ["imp_cmd_Fx_c", "force_Fx_c", "Fx_3"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            },
+            {
+                "title": "Force D",
+                "data": ["imp_cmd_Fx_d", "force_Fx_d", "Fx_2"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 30]
+            }
+        ]
+    },
+    "force_meas":{
+        "figure": {
+            "rows": 2,
+            "cols": 2,
+            "size": [8, 6]
+        },
+        "plots": [
+            {
+                "title": "Force A",
+                "data": ["imp_cmd_Fy_a", "Fz_1"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-110, 20]
+            },
+            {
+                "title": "Force B",
+                "data": ["imp_cmd_Fy_b", "Fz_4"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-110, 20]
+            },
+            {
+                "title": "Force C",
+                "data": ["imp_cmd_Fy_c", "Fz_3"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-110, 20]
+            },
+            {
+                "title": "Force D",
+                "data": ["imp_cmd_Fy_d", "Fz_2"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-110, 20]
             }
         ]
     },
@@ -99,16 +279,16 @@
             {
                 "title": "Theta",
                 "data": ["imp_cmd_theta_a", "state_theta_a"],
-                "labels": ["Commanded", "Estimation"],
+                "labels": ["Commanded", "Measured"],
                 "xy_labels": ["Time (ms)", "Angle (rad)"],
                 "line_styles": ["-", "--"],
                 "colors": ["red", "blue"],
-                "ylims": [0, 1.5]
+                "ylims": [0, 2]
             },
             {
                 "title": "Beta",
                 "data": ["cmd_beta_a", "state_beta_a"],
-                "labels": ["Commanded", "Estimation"],
+                "labels": ["Commanded", "Measured"],
                 "xy_labels": ["Time (ms)", "Angle (rad)"],
                 "line_styles": ["-", "--"],
                 "colors": ["red", "blue"],
@@ -116,21 +296,111 @@
             },
             {
                 "title": "Force X",
-                "data": ["imp_cmd_Fx_a", "force_Fx_a", "Fy_2"],
-                "labels": ["Commanded", "Estimation", "Measure"],
+                "data": ["imp_cmd_Fx_a", "force_Fx_a", "Fy_1"],
+                "labels": ["Commanded", "Estimation", "Measured"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", "-."],
                 "colors": ["red", "blue", "black"],
-                "ylims": [-100, 100]
+                "ylims": [-50, 50]
             },
             {
                 "title": "Force Y",
-                "data": ["imp_cmd_Fy_a", "force_Fy_a", "Fz_2"],
+                "data": ["imp_cmd_Fy_a", "force_Fy_a", "Fz_1"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", "-."],
+                "colors": ["red", "blue", "black"],
+                "ylims": [-120, 30]
+            }
+        ]
+    },
+    "B_meas":{
+        "figure": {
+            "rows": 2,
+            "cols": 2,
+            "size": [8, 6]
+        },
+        "plots": [
+            {
+                "title": "Theta",
+                "data": ["imp_cmd_theta_b", "state_theta_b"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Angle (rad)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [0, 2]
+            },
+            {
+                "title": "Beta",
+                "data": ["cmd_beta_b", "state_beta_b"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Angle (rad)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-0.2, 0.2]
+            },
+            {
+                "title": "Force X",
+                "data": ["imp_cmd_Fx_b", "force_Fx_b", "Fy_4"],
                 "labels": ["Commanded", "Estimation", "Measure"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", "-."],
                 "colors": ["red", "blue", "black"],
-                "ylims": [-200, 100]
+                "ylims": [-50, 50]
+            },
+            {
+                "title": "Force Y",
+                "data": ["imp_cmd_Fy_b", "force_Fy_b", "Fz_4"],
+                "labels": ["Commanded", "Estimation", "Measure"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", "-."],
+                "colors": ["red", "blue", "black"],
+                "ylims": [-120, 30]
+            }
+        ]
+    },
+    "C_meas":{
+        "figure": {
+            "rows": 2,
+            "cols": 2,
+            "size": [8, 6]
+        },
+        "plots": [
+            {
+                "title": "Theta",
+                "data": ["imp_cmd_theta_c", "state_theta_c"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Angle (rad)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [0, 2]
+            },
+            {
+                "title": "Beta",
+                "data": ["cmd_beta_c", "state_beta_c"],
+                "labels": ["Commanded", "Measured"],
+                "xy_labels": ["Time (ms)", "Angle (rad)"],
+                "line_styles": ["-", "--"],
+                "colors": ["red", "blue"],
+                "ylims": [-0.2, 0.2]
+            },
+            {
+                "title": "Force X",
+                "data": ["imp_cmd_Fx_c", "force_Fx_c", "Fy_3"],
+                "labels": ["Commanded", "Estimation", "Measure"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", "-."],
+                "colors": ["red", "blue", "black"],
+                "ylims": [-50, 50]
+            },
+            {
+                "title": "Force Y",
+                "data": ["imp_cmd_Fy_c", "force_Fy_c", "Fz_3"],
+                "labels": ["Commanded", "Estimation", "Measure"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", "-."],
+                "colors": ["red", "blue", "black"],
+                "ylims": [-120, 30]
             }
         ]
     },
@@ -185,6 +455,33 @@
                 "line_styles": ["-", "--", "-.", ":"],
                 "colors": ["red", "blue", "black", "green"],
                 "ylims": [-20, 20]
+            }
+        ]
+    },
+    "theta_Fz":{
+        "figure": {
+            "rows": 2,
+            "cols": 1,
+            "size": [8, 6]
+        },
+        "plots": [
+            {
+                "title": "Theta",
+                "data": ["state_theta_a", "state_theta_b", "state_theta_c", "state_theta_d"],
+                "labels": ["A", "B", "C", "D"],
+                "xy_labels": ["Time (ms)", "Angle (rad)"],
+                "line_styles": ["-", "--", "-.", ":"],
+                "colors": ["red", "blue", "black", "green"],
+                "ylims": [0, 2.5]
+            },
+            {
+                "title": "Fz",
+                "data": ["Fz_1", "Fz_4", "Fz_3", "Fz_2"],
+                "labels": ["A", "B", "C", "D"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", "-.", ":"],
+                "colors": ["red", "blue", "black", "green"],
+                "ylims": [-120, 30]
             }
         ]
     }

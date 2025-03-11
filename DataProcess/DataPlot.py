@@ -23,19 +23,23 @@ def butter_lowpass_filter(raw_data, cutoff, fs, order=5):
 
 ### user config
 file_1 = True
-# filefolder_1 = 'corgi_ws/corgi_ros_ws/output_data'
-filefolder_1 = 'research_ws/data/0221'
-filename_1 = 'fsm_test_forward.csv'
+filefolder_1 = 'corgi_ws/corgi_ros_ws/output_data'
+# filefolder_1 = 'research_ws/data/0226'
+filename_1 = 'force_plate_test.csv'
 
-file_2 = False
-# filefolder_2 = 'corgi_ws/corgi_ros_ws/output_data'
-filefolder_2 = 'research_ws/data/0220/vicon'
-filename_2 = 'imp_stance_2.csv'
+file_2 = True
+filefolder_2 = 'corgi_ws/corgi_ros_ws/output_data'
+# filefolder_2 = 'research_ws/data/0226/vicon'
+filename_2 = 'force_plate_test_data.csv'
 
 start_idx = 0
-end_idx = 50000
-vicon_idx = 0
+end_idx = -1
+vicon_idx = 24206-21972
 
+# 19459-16990 -> G_force
+# 24206-21972
+
+# 11780-9949 -> G_pos
 
 ### load data
 df_data_1 = pd.DataFrame()
@@ -57,7 +61,7 @@ df_data = pd.concat([df_data_1, df_data_2], axis=1)
 ### plot config
 load_config = True
 set_ylim = True
-config_name = "eta_state"
+config_name = "force_real_y"
 
 if not load_config:
     config = {
@@ -69,21 +73,21 @@ if not load_config:
         "plots": [
             {
                 "title": "Theta",
-                "data": ["cmd_theta_a", "cmd_theta_b", "cmd_theta_c", "cmd_theta_d"],
-                "labels": ["A", "B", "C", "D"],
+                "data": ["cmd_theta_a", "state_theta_a"],
+                "labels": ["Commanded", "Measured"],
                 "xy_labels": ["Time (ms)", "Angle (rad)"],
                 "line_styles": ["-", "--", "-.", ":"],
                 "colors": ["red", "blue", "black", "green"],
-                "ylims": [0, 2.5]
+                "ylims": [0.2, 1.5]
             },
             {
-                "title": "Beta",
-                "data": ["cmd_beta_a", "cmd_beta_b", "cmd_beta_c", "cmd_beta_d"],
-                "labels": ["A", "B", "C", "D"],
-                "xy_labels": ["Time (ms)", "Angle (rad)"],
+                "title": "Force_Z",
+                "data": ["imp_cmd_Fy_a", "force_Fy_a"],
+                "labels": ["Commanded", "Estimated"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", "-.", ":"],
                 "colors": ["red", "blue", "black", "green"],
-                "ylims": [-20, 20]
+                "ylims": [-210, 50]
             }
         ]
     }
@@ -117,7 +121,18 @@ data = [df_data[col].to_numpy()[start_idx:end_idx, :].T for col in target_data]
 # data[0][1] = legmodel.contact_p[:, 0]
 # data[1][1] = legmodel.contact_p[:, 1]
 
-# data[3][1] = data[3][1]*47/53
+# legmodel.contact_map(data[0][2], data[1][2])
+# data[0][2] = legmodel.contact_p[:, 0]
+# data[1][2] = legmodel.contact_p[:, 1]
+
+# legmodel.contact_map(data[0][3], data[1][3])
+# data[0][3] = legmodel.contact_p[:, 0]
+# data[1][3] = legmodel.contact_p[:, 1]
+
+for i in range(4):
+    data[i][2] = butter_lowpass_filter(raw_data=data[i][2], cutoff=10, fs=1000)
+    
+# data[3][1] = data[3][1]*50/58
 
 
 ### plot data
