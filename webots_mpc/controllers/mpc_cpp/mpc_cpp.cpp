@@ -10,8 +10,8 @@ const int m = 22;
 const double gravity = 9.81;
 const double dt = 0.001;
 const int N = 10;
-const int n_x = 6;
-const int n_u = 3;
+const int n_x = 12;
+const int n_u = 12;
 
 MatrixXd A(n_x, n_x);
 MatrixXd B(n_x, n_u);
@@ -19,22 +19,34 @@ MatrixXd Q(n_x, n_x);
 MatrixXd R(n_u, n_u);
 
 void initializeMatrices() {
-    A << 1, 0, 0, dt, 0, 0,
-         0, 1, 0, 0, dt, 0,
-         0, 0, 1, 0, 0, dt,
-         0, 0, 0, 1, 0, 0,
-         0, 0, 0, 0, 1, 0,
-         0, 0, 0, 0, 0, 1;
+    A << 1,   0,   0,   dt,  0,   0,   0,   0,   0,   0,   0,   0,
+         0,   1,   0,   0,   dt,  0,   0,   0,   0,   0,   0,   0,
+         0,   0,   1,   0,   0,   dt,  0,   0,   0,   0,   0,   0,
+         0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   1,   0,   0,   dt,  0,   0,
+         0,   0,   0,   0,   0,   0,   0,   1,   0,   0,   dt,  0,
+         0,   0,   0,   0,   0,   0,   0,   0,   1,   0,   0,   dt,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   1,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   1,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   1;
 
-    B << 0, 0, 0,
-         0, 0, 0,
-         0, 0, 0,
-         dt/m, 0, 0,
-         0, dt/m, 0,
-         0, 0, dt/m;
+    B << 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         dt/m,0,   0,   dt/m,0,   0,   dt/m,0,   0,   dt/m,0,   0,
+         0,   dt/m,0,   0,   dt/m,0,   0,   dt/m,0,   0,   dt/m,0,
+         0,   0,   dt/m,0,   0,   dt/m,0,   0,   dt/m,0,   0,   dt/m,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
 
     Q = MatrixXd::Zero(n_x, n_x);
-    Q.diagonal() << 1e9, 1e9, 1e9, 5e5, 5e5, 5e5;
+    Q.diagonal() << 1e9, 1e9, 1e9, 5e5, 5e5, 5e5, 1e9, 1e9, 1e9, 5e5, 5e5, 5e5;
     
     R = MatrixXd::Identity(n_u, n_u);
 }
@@ -126,24 +138,43 @@ int main() {
     while (supervisor.step(timestep) != -1) {
         const double *robot_pos = robot->getPosition();
         const double *robot_vel = robot->getVelocity();
+        const double *robot_ang = robot->getOrientation();
 
         VectorXd x(n_x);
-        x << robot_pos[0], robot_pos[1], robot_pos[2], robot_vel[0], robot_vel[1], robot_vel[2];
+        x << robot_pos[0], robot_pos[1], robot_pos[2], robot_vel[0], robot_vel[1], robot_vel[2],
+             robot_ang[0], robot_ang[1], robot_ang[2], robot_vel[3], robot_vel[4], robot_vel[5];
 
         VectorXd x_ref = VectorXd::Zero(N * n_x);
         for (int i = 0; i < N; ++i) {
-            x_ref.segment(i * n_x, n_x) << loop_count/1000.0, 1, 0.5, 0, 0, 0;
-            // x_ref.segment(i * n_x, n_x) << 1, 1, 0.5, 0, 0, 0;
+            x_ref.segment(i * n_x, n_x) << 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0;
         }
 
         VectorXd force = modelPredictiveControl(x, x_ref);
-        double force_arr[3] = {force(0), force(1), force(2)};
-        robot->addForce(force_arr, false);
+
+        double force_A[3] = {force(0), force(1), force(2)};
+        double offset_A[3] = {0.222, 0.2, 0};
+
+        double force_B[3] = {force(3), force(4), force(5)};
+        double offset_B[3] = {0.222, -0.2, 0};
+        
+        double force_C[3] = {force(6), force(7), force(8)};
+        double offset_C[3] = {-0.222, -0.2, 0};
+        
+        double force_D[3] = {force(9), force(10), force(11)};
+        double offset_D[3] = {-0.222, 0.2, 0};
+
+        robot->addForceWithOffset(force_A, offset_A, false);
+        robot->addForceWithOffset(force_B, offset_B, false);
+        robot->addForceWithOffset(force_C, offset_C, false);
+        robot->addForceWithOffset(force_D, offset_D, false);
 
         std::cout << "- - -" << std::endl;
         std::cout << "Robot Pos: [" << robot_pos[0] << ", " << robot_pos[1] << ", " << robot_pos[2] << "]" << std::endl;
         std::cout << "Robot Vel: [" << robot_vel[0] << ", " << robot_vel[1] << ", " << robot_vel[2] << "]" << std::endl;
-        std::cout << "Applied Force: [" << force(0) << ", " << force(1) << ", " << force(2) << "]" << std::endl;
+        std::cout << "Force A: [" << force(0) << ", " << force(1)  << ", " << force(2)  << "]" << std::endl;
+        std::cout << "Force B: [" << force(3) << ", " << force(4)  << ", " << force(5)  << "]" << std::endl;
+        std::cout << "Force C: [" << force(6) << ", " << force(7)  << ", " << force(8)  << "]" << std::endl;
+        std::cout << "Force D: [" << force(9) << ", " << force(10) << ", " << force(11) << "]" << std::endl;
         std::cout << "= = = = =" << std::endl;
 
         loop_count++;

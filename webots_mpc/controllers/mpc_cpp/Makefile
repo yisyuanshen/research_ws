@@ -67,7 +67,7 @@
 
 INCLUDE = -I/usr/local/include/eigen3 -I/usr/local/include -I/usr/local/include/OsqpEigen -I/usr/local/include/osqp
 LIBRARIES = -L/usr/local/lib -lOsqpEigen -losqp
-CXX_SOURCES = mpc_test.cpp
+CXX_SOURCES = mpc_cpp.cpp
 
 ### Do not modify: this includes Webots global Makefile.include
 null :=
