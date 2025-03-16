@@ -42,6 +42,6 @@ DEF robot Robot {
     density -1
     mass 22
   }
-  controller "mpc_test"
+  controller "mpc_py"
   supervisor TRUE
 }
