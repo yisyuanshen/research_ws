@@ -5,11 +5,12 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/Floor.proto"
 
 WorldInfo {
-  basicTimeStep 1
+  gravity 0
+  basicTimeStep 10
 }
 Viewpoint {
-  orientation -0.07913112743520498 0.13969228796800445 0.9870280286562775 1.042032731123048
-  position -1.0725370307118818 -2.635194143846215 0.8035329836511031
+  orientation -0.09791732398699997 0.19498058924406028 0.9759071510555006 0.9504995737490837
+  position -1.2993546466549362 -2.5200862033758153 0.9045939788121942
 }
 TexturedBackground {
 }
@@ -41,6 +42,13 @@ DEF robot Robot {
   physics Physics {
     density -1
     mass 22
+    centerOfMass [
+      0 0 0
+    ]
+    inertiaMatrix [
+      0.3666666666666667 0.7333333333333334 0.9533333333333334
+      0 0 0
+    ]
   }
   controller "mpc_cpp"
   supervisor TRUE

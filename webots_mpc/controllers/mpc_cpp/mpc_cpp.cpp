@@ -9,7 +9,7 @@ using namespace webots;
 // Constants
 const int m = 22;
 const double gravity = 9.81;
-const double dt = 0.001;
+const double dt = 0.01;
 const int N = 10;
 const int n_x = 12;
 const int n_u = 12;
@@ -80,13 +80,13 @@ void initializeMatrices(const double *ra, const double *rb, const double *rc, co
 
     // Set up state and control cost matrices.
     Q = Eigen::MatrixXd::Zero(n_x, n_x);
-    Q.diagonal() << 1e9, 1e9, 1e9, 1e6, 1e6, 1e6, 1e9, 1e9, 1e9, 1e6, 1e6, 1e6;
+    Q.diagonal() << 1e9, 1e9, 1e9, 1e7, 1e7, 1e7, 1e9, 1e9, 1e9, 1e6, 1e6, 1e6;
     R = Eigen::MatrixXd::Identity(n_u, n_u);
 }
 
 // Model Predictive Control function that solves a quadratic program.
 // It returns the first control input of the optimal control sequence.
-Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::VectorXd &x_ref) {
+Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::VectorXd &x_ref, const bool *selection_matrix) {
     // Prediction matrices for state evolution over the horizon.
     Eigen::MatrixXd A_qp = Eigen::MatrixXd::Zero(N * n_x, n_x);
     Eigen::MatrixXd B_qp = Eigen::MatrixXd::Zero(N * n_x, (N - 1) * n_u);
@@ -130,26 +130,92 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
     // Set up the QP solver.
     OsqpEigen::Solver solver;
     const int n_vars = (N - 1) * n_u;
+    int total_constraints = n_vars + n_vars;
+
     solver.data()->setNumberOfVariables(n_vars);
-    solver.data()->setNumberOfConstraints(n_vars);
+    solver.data()->setNumberOfConstraints(total_constraints);
 
     Eigen::SparseMatrix<double> H_sparse = H.sparseView();
     solver.data()->setHessianMatrix(H_sparse);
     solver.data()->setGradient(g);
 
     // Box constraints (identity matrix for linear constraints).
-    Eigen::SparseMatrix<double> A_constraint(n_vars, n_vars);
-    A_constraint.setIdentity();
-    solver.data()->setLinearConstraintsMatrix(A_constraint);
+    Eigen::SparseMatrix<double> constraints(total_constraints, n_vars);
+    Eigen::VectorXd lower_bound(total_constraints);
+    Eigen::VectorXd upper_bound(total_constraints);
 
-    Eigen::VectorXd lb = Eigen::VectorXd::Constant(n_vars, -300.0);
-    Eigen::VectorXd ub = Eigen::VectorXd::Constant(n_vars, 300.0);
-    solver.data()->setLowerBound(lb);
-    solver.data()->setUpperBound(ub);
+    for (int i = 0; i<n_vars; i++) {
+        constraints.insert(i, i) = 1.0;
+        lower_bound(i) = -30;
+        upper_bound(i) = 30;
 
-    // Initialize and solve the QP problem.
-    solver.initSolver();
-    solver.solveProblem();
+        // if (i % 3 == 0) {
+        //     lower_bound(i) = -100;
+        //     upper_bound(i) = 100;
+        // }
+        // else if (i % 3 == 1) {
+        //     lower_bound(i) = 0;
+        //     upper_bound(i) = 0;
+        // }
+        // else {
+        //     lower_bound(i) = -300;
+        //     upper_bound(i) = 300;
+        // }
+    }
+    
+    Eigen::VectorXd D(n_vars);
+
+    for (int i = 0; i < 4; i++) {
+        if (selection_matrix[i]) {
+             D.segment(i * 3, 3) << 0, 0, 0;
+            //  D.segment(i * 3, 3) << 0, 1, 0;
+        }
+        else {
+             D.segment(i * 3, 3) << 1, 1, 1;
+        }
+    }
+
+    for (int i = 0; i < n_vars; i++) {
+        constraints.insert(n_vars+i, i) = D(i);
+        lower_bound(n_vars+i) = 0.0;
+        upper_bound(n_vars+i) = 0.0;
+    }
+
+    constraints.makeCompressed();
+    
+    solver.data()->setNumberOfConstraints(total_constraints);
+    solver.data()->setLinearConstraintsMatrix(constraints);
+    solver.data()->setLowerBound(lower_bound);
+    solver.data()->setUpperBound(upper_bound);
+
+    // -------------------- OSQP Solver Settings --------------------
+    // solver.settings()->setAbsoluteTolerance(1.0e-3);
+    // solver.settings()->setRelativeTolerance(1.0e-3);
+    // solver.settings()->setPrimalInfeasibilityTolerance(1.0e-4);
+    // solver.settings()->setDualInfeasibilityTolerance(1.0e-4);
+    
+    // // ADMM parameters.
+    // solver.settings()->setRho(1.0e-1);        // ADMM penalty parameter (adaptive if available)
+    // solver.settings()->setSigma(1.0e-6);      // Regularization parameter
+    // solver.settings()->setAlpha(1.60);        // Over-relaxation parameter
+
+    // // Other settings.
+    // solver.settings()->setMaxIteration(4000);
+    // solver.settings()->setCheckTermination(25);
+    // solver.settings()->setScaling(true);
+    // solver.settings()->setScaledTerimination(false);
+    // solver.settings()->setWarmStart(true);
+    // solver.settings()->setPolish(false);
+    // ----------------------------------------------------------------
+
+    // Initialize and solve the QP.
+    if (!solver.initSolver()) {
+        throw std::runtime_error("OSQP initialization failed");
+    }
+    
+    if (solver.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) {
+        throw std::runtime_error("OSQP solver failed");
+    }
     
     // Return the first control input.
     Eigen::VectorXd u_opt = solver.getSolution();
@@ -198,7 +264,8 @@ int main() {
         initializeMatrices(offset_A, offset_B, offset_C, offset_D);
 
         // Compute optimal force vector via MPC.
-        Eigen::VectorXd force = modelPredictiveControl(x, x_ref);
+        bool selection_matrix[4] = {true, true, true, true};
+        Eigen::VectorXd force = modelPredictiveControl(x, x_ref, selection_matrix);
 
         // Extract forces for each actuator.
         double force_A[3] = {force(0), force(1), force(2)};
