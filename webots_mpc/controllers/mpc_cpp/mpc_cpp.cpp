@@ -76,7 +76,7 @@ void initializeMatrices(const double *ra, const double *rb, const double *rc, co
          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
          0, -60/m*ra[2]*dt, 60/m*ra[1]*dt, 0, -60/m*rb[2]*dt, 60/m*rb[1]*dt, 0, -60/m*rc[2]*dt, 60/m*rc[1]*dt, 0, -60/m*rd[2]*dt, 60/m*rd[1]*dt,
          30/m*ra[2]*dt, 0, -30/m*ra[0]*dt, 30/m*rb[2]*dt, 0, -30/m*rb[0]*dt, 30/m*rc[2]*dt, 0, -30/m*rc[0]*dt, 30/m*rd[2]*dt, 0, -30/m*rd[0]*dt,
-         -300/13/m*ra[1]*dt, 300/13/m*ra[0]*dt, 0, -300/13/m*rb[1]*dt, 300/13/m*rb[0]*dt, 0, -300/13/m*rc[1]*dt, 300/13/m*rc[0]*dt, 0, -300/13/m*rd[1]*dt, 300/13/m*rd[0]*dt;
+         -300/13/m*ra[1]*dt, 300/13/m*ra[0]*dt, 0, -300/13/m*rb[1]*dt, 300/13/m*rb[0]*dt, 0, -300/13/m*rc[1]*dt, 300/13/m*rc[0]*dt, 0, -300/13/m*rd[1]*dt, 300/13/m*rd[0]*dt, 0;
 
     // Set up state and control cost matrices.
     Q = Eigen::MatrixXd::Zero(n_x, n_x);
@@ -90,6 +90,15 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
     // Prediction matrices for state evolution over the horizon.
     Eigen::MatrixXd A_qp = Eigen::MatrixXd::Zero(N * n_x, n_x);
     Eigen::MatrixXd B_qp = Eigen::MatrixXd::Zero(N * n_x, (N - 1) * n_u);
+
+    Eigen::VectorXd d = Eigen::VectorXd::Zero(n_x);
+    d(2) = -0.5 * dt * dt * gravity;
+    d(5) = -dt * gravity;
+
+    Eigen::VectorXd d_qp = Eigen::VectorXd::Zero(N * n_x);
+    for (int i = 0; i < N; i++) {
+        d_qp.segment(i * n_x, n_x) = d;
+    }
 
     // Build prediction matrices
     for (int i = 0; i < N; ++i) {
@@ -122,7 +131,7 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
 
     // Set up the quadratic cost function: 1/2 * u'Hu + g'u.
     Eigen::MatrixXd H = 2 * (B_qp.transpose() * Q_N * B_qp + R_N);
-    Eigen::VectorXd g = 2 * B_qp.transpose() * Q_N * (A_qp * x - x_ref);
+    Eigen::VectorXd g = 2 * B_qp.transpose() * Q_N * (A_qp * x - x_ref + d_qp);
 
     // Regularize H to ensure positive definiteness.
     H += 1e-6 * Eigen::MatrixXd::Identity(H.rows(), H.cols());
@@ -146,8 +155,8 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
 
     for (int i = 0; i<n_vars; i++) {
         constraints.insert(i, i) = 1.0;
-        lower_bound(i) = -30;
-        upper_bound(i) = 30;
+        lower_bound(i) = -300;
+        upper_bound(i) = 300;
 
         // if (i % 3 == 0) {
         //     lower_bound(i) = -100;
@@ -164,14 +173,14 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
     }
     
     Eigen::VectorXd D(n_vars);
-
-    for (int i = 0; i < 4; i++) {
-        if (selection_matrix[i]) {
-            D.segment(i * 3, 3) << 0, 0, 0;
-            //  D.segment(i * 3, 3) << 0, 1, 0;
-        }
-        else {
-            D.segment(i * 3, 3) << 1, 1, 1;
+    for (int k = 0; k < (N - 1); ++k) {
+        for (int i = 0; i < 4; i++) {
+            if (selection_matrix[i]) {
+                D.segment(k * n_u + i * 3, 3) << 0, 0, 0;
+            }
+            else {
+                D.segment(k * n_u + i * 3, 3) << 1, 1, 1;
+            }
         }
     }
 
@@ -195,7 +204,7 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
     // solver.settings()->setDualInfeasibilityTolerance(1.0e-4);
     
     // // ADMM parameters.
-    // solver.settings()->setRho(1.0e-1);        // ADMM penalty parameter (adaptive if available)
+    // solver.settings()->setRho(1.0e-3);        // ADMM penalty parameter (adaptive if available)
     // solver.settings()->setSigma(1.0e-6);      // Regularization parameter
     // solver.settings()->setAlpha(1.60);        // Over-relaxation parameter
 
@@ -251,7 +260,7 @@ int main() {
         // Define reference state trajectory (hover at z = 0.3, rest zeros).
         Eigen::VectorXd x_ref = Eigen::VectorXd::Zero(N * n_x);
         for (int i = 0; i < N; ++i) {
-            x_ref.segment(i * n_x, n_x) << 0, 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+            x_ref.segment(i * n_x, n_x) << 1, 1, 0.6, 0, 0, 0, 0, 0, 0, 0, 0, 0;
         }
 
         // Define force offsets for each actuator (legs).
@@ -303,6 +312,12 @@ int main() {
         std::cout << "Force B: [" << force(3) << ", " << force(4) << ", " << force(5) << "]" << std::endl;
         std::cout << "Force C: [" << force(6) << ", " << force(7) << ", " << force(8) << "]" << std::endl;
         std::cout << "Force D: [" << force(9) << ", " << force(10) << ", " << force(11) << "]" << std::endl;
+
+        std::cout << "Robot Z: " << robot_pos[2] << " | Reference Z: " << x_ref(2) << std::endl;
+        double total_force_z = force_A[2] + force_B[2] + force_C[2] + force_D[2];
+
+        std::cout << "Total Force Z: " << total_force_z << " (Expected: " << (m * gravity) << ")" << std::endl;
+
         std::cout << "= = = = =" << std::endl;
     }
     return 0;
