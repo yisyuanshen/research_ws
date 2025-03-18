@@ -158,7 +158,7 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
         //     upper_bound(i) = 0;
         // }
         // else {
-        //     lower_bound(i) = -300;
+        //     lower_bound(i) = -0;
         //     upper_bound(i) = 300;
         // }
     }
@@ -167,11 +167,11 @@ Eigen::VectorXd modelPredictiveControl(const Eigen::VectorXd &x, const Eigen::Ve
 
     for (int i = 0; i < 4; i++) {
         if (selection_matrix[i]) {
-             D.segment(i * 3, 3) << 0, 0, 0;
+            D.segment(i * 3, 3) << 0, 0, 0;
             //  D.segment(i * 3, 3) << 0, 1, 0;
         }
         else {
-             D.segment(i * 3, 3) << 1, 1, 1;
+            D.segment(i * 3, 3) << 1, 1, 1;
         }
     }
 
@@ -244,9 +244,9 @@ int main() {
         // Assemble state vector.
         Eigen::VectorXd x(n_x);
         x << robot_pos[0], robot_pos[1], robot_pos[2],
-            robot_vel[0], robot_vel[1], robot_vel[2],
-            roll,         pitch,        yaw,
-            robot_vel[3], robot_vel[4], robot_vel[5];
+             robot_vel[0], robot_vel[1], robot_vel[2],
+             roll,         pitch,        yaw,
+             robot_vel[3], robot_vel[4], robot_vel[5];
 
         // Define reference state trajectory (hover at z = 0.3, rest zeros).
         Eigen::VectorXd x_ref = Eigen::VectorXd::Zero(N * n_x);
@@ -264,7 +264,7 @@ int main() {
         initializeMatrices(offset_A, offset_B, offset_C, offset_D);
 
         // Compute optimal force vector via MPC.
-        bool selection_matrix[4] = {true, true, true, true};
+        bool selection_matrix[4] = {false, true, true, true};
         Eigen::VectorXd force = modelPredictiveControl(x, x_ref, selection_matrix);
 
         // Extract forces for each actuator.
