@@ -24,22 +24,21 @@ def butter_lowpass_filter(raw_data, cutoff, fs, order=5):
 ### user config
 file_1 = True
 filefolder_1 = 'corgi_ws/corgi_ros_ws/output_data'
-# filefolder_1 = 'research_ws/data/0226'
-filename_1 = 'force_plate_test.csv'
+filefolder_1 = 'research_ws/data/0328'
+filename_1 = '0328_force_G.csv'
 
 file_2 = True
 filefolder_2 = 'corgi_ws/corgi_ros_ws/output_data'
-# filefolder_2 = 'research_ws/data/0226/vicon'
-filename_2 = 'force_plate_test_data.csv'
+filefolder_2 = 'research_ws/data/0328/vicon'
+filename_2 = '0328_force_G.csv'
 
 start_idx = 0
 end_idx = -1
-vicon_idx = 24206-21972
+vicon_idx = 42123-39950
 
-# 19459-16990 -> G_force
-# 24206-21972
-
-# 11780-9949 -> G_pos
+# G: 9630-4000
+# L: 9124-4000
+# U: 7908-4000
 
 ### load data
 df_data_1 = pd.DataFrame()
@@ -60,34 +59,52 @@ df_data = pd.concat([df_data_1, df_data_2], axis=1)
 
 ### plot config
 load_config = True
-set_ylim = True
+set_ylim = False
 config_name = "force_real_y"
 
 if not load_config:
     config = {
         "figure": {
             "rows": 2,
-            "cols": 1,
-            "size": [8, 6]
+            "cols": 2,
+            "size": [6, 7]
         },
         "plots": [
             {
-                "title": "Theta",
-                "data": ["cmd_theta_a", "state_theta_a"],
-                "labels": ["Commanded", "Measured"],
+                "title": "theta",
+                "data": ["imp_cmd_theta_a", "state_theta_a"],
+                "labels": ["CMD", "STATE"],
                 "xy_labels": ["Time (ms)", "Angle (rad)"],
-                "line_styles": ["-", "--", "-.", ":"],
-                "colors": ["red", "blue", "black", "green"],
-                "ylims": [0.2, 1.5]
+                "line_styles": ["-", "--"],
+                "colors": ["C0", "C1"],
+                "ylims": [-10, 10]
             },
             {
-                "title": "Force_Z",
-                "data": ["imp_cmd_Fy_a", "force_Fy_a"],
-                "labels": ["Commanded", "Estimated"],
+                "title": "beta",
+                "data": ["imp_cmd_beta_a", "state_beta_a"],
+                "labels": ["CMD", "STATE"],
+                "xy_labels": ["Time (ms)", "Angle (rad)"],
+                "line_styles": ["-", "--"],
+                "colors": ["C0", "C1"],
+                "ylims": [-10, 10]
+            },
+            {
+                "title": "Fx",
+                "data": ["imp_cmd_Fx_a", "force_Fx_a"],
+                "labels": ["CMD", "STATE"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
-                "line_styles": ["-", "--", "-.", ":"],
-                "colors": ["red", "blue", "black", "green"],
-                "ylims": [-210, 50]
+                "line_styles": ["-", "--"],
+                "colors": ["C0", "C1"],
+                "ylims": [-10, 10]
+            },
+            {
+                "title": "Fz",
+                "data": ["imp_cmd_Fy_a", "force_Fy_a"],
+                "labels": ["CMD", "STATE"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--"],
+                "colors": ["C0", "C1"],
+                "ylims": [-10, 10]
             }
         ]
     }
@@ -129,14 +146,25 @@ data = [df_data[col].to_numpy()[start_idx:end_idx, :].T for col in target_data]
 # data[0][3] = legmodel.contact_p[:, 0]
 # data[1][3] = legmodel.contact_p[:, 1]
 
+# data[0][0] = butter_lowpass_filter(raw_data=data[0][0], cutoff=100, fs=1000)
+# data[1][0] = butter_lowpass_filter(raw_data=data[1][0], cutoff=100, fs=1000)
+
+
 for i in range(4):
-    data[i][2] = butter_lowpass_filter(raw_data=data[i][2], cutoff=10, fs=1000)
+    # data[i][0] -= 9.81*0.7
+    data[i][1] = butter_lowpass_filter(raw_data=data[i][1], cutoff=5, fs=1000)
+    data[i][2] = butter_lowpass_filter(raw_data=data[i][2], cutoff=5, fs=1000)
+    # data[i][2] = butter_lowpass_filter(raw_data=data[i][2], cutoff=30, fs=1000)
+    # data[i][0] *= 2.2
+    # data[i][1] *= 2.2
+    # data[i][1] = (data[i][2]-data[i][0])
+    pass
     
 # data[3][1] = data[3][1]*50/58
 
 
 ### plot data
-fig = plt.figure(figsize=(8, 6))
+fig = plt.figure(figsize=fig_size)
 gs = GridSpec(fig_row, fig_col, figure=fig)
 
 axes = [fig.add_subplot(gs[row, col]) for row in range(fig_row) for col in range(fig_col)]

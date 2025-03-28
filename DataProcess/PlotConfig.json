@@ -25,8 +25,8 @@
                 "ylims": [-120, 20]
             },
             {
-                "title": "Force C",
-                "data": ["imp_cmd_Fy_c", "force_Fy_c"],
+                "title": "Force D",
+                "data": ["imp_cmd_Fy_d", "force_Fy_d"],
                 "labels": ["Commanded", "Estimation"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
@@ -34,8 +34,8 @@
                 "ylims": [-120, 20]
             },
             {
-                "title": "Force D",
-                "data": ["imp_cmd_Fy_d", "force_Fy_d"],
+                "title": "Force C",
+                "data": ["imp_cmd_Fy_c", "force_Fy_c"],
                 "labels": ["Commanded", "Estimation"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
@@ -70,8 +70,8 @@
                 "ylims": [-120, 20]
             },
             {
-                "title": "Force C",
-                "data": ["imp_cmd_Fx_c", "force_Fx_c"],
+                "title": "Force D",
+                "data": ["imp_cmd_Fx_d", "force_Fx_d"],
                 "labels": ["Commanded", "Estimation"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
@@ -79,8 +79,8 @@
                 "ylims": [-120, 20]
             },
             {
-                "title": "Force D",
-                "data": ["imp_cmd_Fx_d", "force_Fx_d"],
+                "title": "Force C",
+                "data": ["imp_cmd_Fx_c", "force_Fx_c"],
                 "labels": ["Commanded", "Estimation"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--"],
@@ -103,7 +103,7 @@
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", ":"],
                 "colors": ["red", "blue", "green"],
-                "ylims": [-120, 30]
+                "ylims": [-120, 20]
             },
             {
                 "title": "Force B",
@@ -112,16 +112,7 @@
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", ":"],
                 "colors": ["red", "blue", "green"],
-                "ylims": [-120, 30]
-            },
-            {
-                "title": "Force C",
-                "data": ["imp_cmd_Fy_c", "force_Fy_c", "Fz_3"],
-                "labels": ["Commanded", "Estimation", "Measured"],
-                "xy_labels": ["Time (ms)", "Force (N)"],
-                "line_styles": ["-", "--", ":"],
-                "colors": ["red", "blue", "green"],
-                "ylims": [-120, 30]
+                "ylims": [-120, 20]
             },
             {
                 "title": "Force D",
@@ -130,7 +121,16 @@
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", ":"],
                 "colors": ["red", "blue", "green"],
-                "ylims": [-120, 30]
+                "ylims": [-120, 20]
+            },
+            {
+                "title": "Force C",
+                "data": ["imp_cmd_Fy_c", "force_Fy_c", "Fz_3"],
+                "labels": ["Commanded", "Estimation", "Measured"],
+                "xy_labels": ["Time (ms)", "Force (N)"],
+                "line_styles": ["-", "--", ":"],
+                "colors": ["red", "blue", "green"],
+                "ylims": [-120, 20]
             }
         ]
     },
@@ -160,8 +160,8 @@
                 "ylims": [-120, 30]
             },
             {
-                "title": "Force C",
-                "data": ["imp_cmd_Fx_c", "force_Fx_c", "Fx_3"],
+                "title": "Force D",
+                "data": ["imp_cmd_Fx_d", "force_Fx_d", "Fx_2"],
                 "labels": ["Commanded", "Estimation", "Measured"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", ":"],
@@ -169,8 +169,8 @@
                 "ylims": [-120, 30]
             },
             {
-                "title": "Force D",
-                "data": ["imp_cmd_Fx_d", "force_Fx_d", "Fx_2"],
+                "title": "Force C",
+                "data": ["imp_cmd_Fx_c", "force_Fx_c", "Fx_3"],
                 "labels": ["Commanded", "Estimation", "Measured"],
                 "xy_labels": ["Time (ms)", "Force (N)"],
                 "line_styles": ["-", "--", ":"],
