@@ -6,11 +6,8 @@ from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
-import sys
-sys.path.append(os.path.join(os.environ['HOME'], 'research_ws/LegWheel'))
-
-import LegModel
 import ViconProcess
+import LegModel
 
 
 def butter_lowpass_filter(raw_data, cutoff, fs, order=5):
@@ -21,170 +18,172 @@ def butter_lowpass_filter(raw_data, cutoff, fs, order=5):
     return y
 
 
-### user config
-file_1 = True
-filefolder_1 = 'corgi_ws/corgi_ros_ws/output_data'
-filefolder_1 = 'research_ws/data/0328'
-filename_1 = '0328_force_G.csv'
+# Config Sets: ['default', 'fx_est_each', 'fz_est_each', 'fx_meas_each', 'fz_meas_each', 'single_leg_est', 'mpc_body_sim', 'mpc_force_sim']
+conifg_set = 'mpc_body_real'
+# conifg_set = ''
+set_ylim = False
 
-file_2 = True
-filefolder_2 = 'corgi_ws/corgi_ros_ws/output_data'
-filefolder_2 = 'research_ws/data/0328/vicon'
-filename_2 = '0328_force_G.csv'
+ros_data_file = 'data/0402_mpc/0402_mpc_7474_obstacle.csv'
+force_data_file = 'data/0402_mpc/vicon/mpc_7474_obstacle.csv'
+# force_data_file = ''
+# force_data_file = 'data_old/0328_mpc/vicon/0328_mpc_4.csv'
 
 start_idx = 0
 end_idx = -1
-vicon_idx = 42123-39950
+vicon_offest = 0
 
-# G: 9630-4000
-# L: 9124-4000
-# U: 7908-4000
+# 18673-8000+60 5
+# 5659-500 4
+# 5200-500 3
 
-### load data
-df_data_1 = pd.DataFrame()
-if file_1:
-    filepath_1 = os.path.join(os.environ['HOME'], filefolder_1, filename_1)
-    try: df_data_1 = pd.read_csv(filepath_1)
-    except: df_data_1 = ViconProcess.read_csv(filepath_1, start_idx=vicon_idx)
-
-df_data_2 = pd.DataFrame()
-if file_2:
-    filepath_2 = os.path.join(os.environ['HOME'], filefolder_2, filename_2)
-    try: df_data_2 = pd.read_csv(filepath_2)
-    except: df_data_2 = ViconProcess.read_csv(filepath_2, start_idx=vicon_idx)
-
-df_data = pd.concat([df_data_1, df_data_2], axis=1)
-
-# end_idx = min(df_data_1.__len__(), df_data_2.__len__())
-
-### plot config
-load_config = True
-set_ylim = False
-config_name = "force_real_y"
-
-if not load_config:
-    config = {
-        "figure": {
-            "rows": 2,
-            "cols": 2,
-            "size": [6, 7]
-        },
-        "plots": [
-            {
-                "title": "theta",
-                "data": ["imp_cmd_theta_a", "state_theta_a"],
-                "labels": ["CMD", "STATE"],
-                "xy_labels": ["Time (ms)", "Angle (rad)"],
-                "line_styles": ["-", "--"],
-                "colors": ["C0", "C1"],
-                "ylims": [-10, 10]
-            },
-            {
-                "title": "beta",
-                "data": ["imp_cmd_beta_a", "state_beta_a"],
-                "labels": ["CMD", "STATE"],
-                "xy_labels": ["Time (ms)", "Angle (rad)"],
-                "line_styles": ["-", "--"],
-                "colors": ["C0", "C1"],
-                "ylims": [-10, 10]
-            },
-            {
-                "title": "Fx",
-                "data": ["imp_cmd_Fx_a", "force_Fx_a"],
-                "labels": ["CMD", "STATE"],
-                "xy_labels": ["Time (ms)", "Force (N)"],
-                "line_styles": ["-", "--"],
-                "colors": ["C0", "C1"],
-                "ylims": [-10, 10]
-            },
-            {
-                "title": "Fz",
-                "data": ["imp_cmd_Fy_a", "force_Fy_a"],
-                "labels": ["CMD", "STATE"],
-                "xy_labels": ["Time (ms)", "Force (N)"],
-                "line_styles": ["-", "--"],
-                "colors": ["C0", "C1"],
-                "ylims": [-10, 10]
-            }
-        ]
-    }
-else:
-    with open(os.path.join(os.getcwd(), 'DataProcess', 'PlotConfig.json'), 'r') as file:
-        config = json.load(file)[config_name]
-
-### load config
-fig_row  = config['figure']['rows']
-fig_col  = config['figure']['cols']
-fig_size = config['figure']['size']
-target_data = [c['data'] for c in config['plots']]
-titles = [c['title'] for c in config['plots']]
-labels = [c['labels'] for c in config['plots']]
-xy_labels = [c['xy_labels'] for c in config['plots']]
-styles = [c['line_styles'] for c in config['plots']]
-colors = [c['colors'] for c in config['plots']]
-ylims  = [c['ylims'] for c in config['plots']]
-
-data = [df_data[col].to_numpy()[start_idx:end_idx, :].T for col in target_data]
-
-
-### additional process
-# legmodel = LegModel.LegModel(sim=False)
-
-# legmodel.contact_map(data[0][0], data[1][0])
-# data[0][0] = legmodel.contact_p[:, 0]
-# data[1][0] = legmodel.contact_p[:, 1]
-
-# legmodel.contact_map(data[0][1], data[1][1])
-# data[0][1] = legmodel.contact_p[:, 0]
-# data[1][1] = legmodel.contact_p[:, 1]
-
-# legmodel.contact_map(data[0][2], data[1][2])
-# data[0][2] = legmodel.contact_p[:, 0]
-# data[1][2] = legmodel.contact_p[:, 1]
-
-# legmodel.contact_map(data[0][3], data[1][3])
-# data[0][3] = legmodel.contact_p[:, 0]
-# data[1][3] = legmodel.contact_p[:, 1]
-
-# data[0][0] = butter_lowpass_filter(raw_data=data[0][0], cutoff=100, fs=1000)
-# data[1][0] = butter_lowpass_filter(raw_data=data[1][0], cutoff=100, fs=1000)
-
-
-for i in range(4):
-    # data[i][0] -= 9.81*0.7
-    data[i][1] = butter_lowpass_filter(raw_data=data[i][1], cutoff=5, fs=1000)
-    data[i][2] = butter_lowpass_filter(raw_data=data[i][2], cutoff=5, fs=1000)
-    # data[i][2] = butter_lowpass_filter(raw_data=data[i][2], cutoff=30, fs=1000)
-    # data[i][0] *= 2.2
-    # data[i][1] *= 2.2
-    # data[i][1] = (data[i][2]-data[i][0])
-    pass
+def process_data(data):
+    data[0][1] -= data[0][1][0]
+    data[1][1] -= data[1][1][0]
+    # data[2][1] = butter_lowpass_filter(raw_data=data[2][1], cutoff=5, fs=1000)
+    for i in range(4):
+        # data[i][1] *= -1
+        # data[i][1] = 0
+        # data[i][0] -= 0.68 * 9.81
+        # data[i][2] *= -1
+        # data[i][1] = butter_lowpass_filter(raw_data=data[i][1], cutoff=5, fs=1000)
+        # data[i][2] = butter_lowpass_filter(raw_data=data[i][2], cutoff=100, fs=1000)
+        
+        pass
     
-# data[3][1] = data[3][1]*50/58
+    return data
 
 
-### plot data
-fig = plt.figure(figsize=fig_size)
-gs = GridSpec(fig_row, fig_col, figure=fig)
+def set_config(config):
+    config['row_col'] = [1, 1]
+    config['fig_size'] = [8, 6]
+    config['titles'] = ["Data Plot"]
+    # config['data'] = [["force_Fy_a", "force_Fy_b", "force_Fy_c", "force_Fy_d"]]
+    # config['data'] = [["imp_cmd_Fy_a", "imp_cmd_Fy_b", "imp_cmd_Fy_c", "imp_cmd_Fy_d"]]
+    config['data'] = [["state_vel_r_a", "state_vel_l_a", "state_trq_r_a", "state_trq_l_a",  "cmd_trq_r_a", "cmd_trq_l_a"],]
+    config['labels'] = config['data']
+    config['xy_labels'] = [["Time (ms)", "Angle (rad)"]]
+    config['ylims'] = [[0, 2]]
+    
+    config['colors'] = ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"]
+    config['styles'] = ["-", "--", "-.", ":", "-", "--", "-.", ":", "-", "--"]
+    
+    return config
 
-axes = [fig.add_subplot(gs[row, col]) for row in range(fig_row) for col in range(fig_col)]
 
-linewidth = 1.5
+def read_data(ros_data_file, force_data_file):
+    ros_data = pd.read_csv(ros_data_file) if ros_data_file else None
+    force_data = None
+    trigger_idx = 0
 
-for fig_idx in range(len(axes)):
-    for data_idx in range(len(data[fig_idx])):
-        axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][data_idx], label=labels[fig_idx][data_idx], linewidth=linewidth, linestyle=styles[fig_idx][data_idx],  color=colors[fig_idx][data_idx])
+    if force_data_file:
+        try:
+            force_data = pd.read_csv(force_data_file)
+        except:
+            force_data, trigger_idx = ViconProcess.read_csv(force_data_file)
+            # trigger_idx-=5023-4255
+            force_data = force_data.iloc[trigger_idx:, :].iloc[vicon_offest:, :]
 
-    axes[fig_idx].set_title(titles[fig_idx], fontsize=14)
-    axes[fig_idx].set_xlabel(xy_labels[fig_idx][0], fontsize=12)
-    axes[fig_idx].set_ylabel(xy_labels[fig_idx][1], fontsize=12)
-    axes[fig_idx].legend(fontsize=10, loc='best', frameon=True, shadow=True, facecolor='white', edgecolor='black')
-    axes[fig_idx].grid(True, which='both', linestyle='--', linewidth=0.6, alpha=0.8)
-    axes[fig_idx].tick_params(axis='both', which='major', labelsize=10)
-    axes[fig_idx].autoscale(enable=True, axis='both', tight=True)
-    # axes[fig_idx].set_facecolor('#F7F7F7')
-    if set_ylim: axes[fig_idx].set_ylim(ylims[fig_idx])
+    if ros_data is not None:
+        ros_data = ros_data.reset_index(drop=True)
+    if force_data is not None:
+        force_data = force_data.reset_index(drop=True)
 
-plt.tight_layout()
-plt.subplots_adjust(hspace=0.4)
-plt.show()
+    data_list = [df for df in [ros_data, force_data] if df is not None]
+    df_data = pd.concat(data_list, axis=1)
+    
+    qx = df_data['imu_orien_x'].to_numpy()
+    qy = df_data['imu_orien_y'].to_numpy()
+    qz = df_data['imu_orien_z'].to_numpy()
+    qw = df_data['imu_orien_w'].to_numpy()
+    
+    roll = np.arctan2(2 * (qw * qx + qy * qz), 1 - 2 * (qx**2 + qy**2))
+    pitch = np.arcsin(2 * (qw * qy - qz * qx))
+
+    roll_deg = np.degrees(roll)
+    pitch_deg = np.degrees(pitch)
+    
+    df_data['imu_roll'] = -roll_deg
+    df_data['imu_pitch'] = pitch_deg
+    
+    cmd_pos_x = []
+    for i in range(5000):
+        cmd_pos_x.append(0)
+        
+    for i in range(3000):
+        cmd_pos_x.append(0.5*0.1/3*i*i*0.001*0.001)
+    
+    for i in range(df_data.__len__()-8000):
+        cmd_pos_x.append(cmd_pos_x[-1]+0.0001)
+
+    df_data['cmd_pos_x'] = np.array(cmd_pos_x)
+    
+    return df_data
+    
+
+if __name__ == '__main__':
+    df_data = read_data(ros_data_file=ros_data_file, force_data_file=force_data_file)
+
+    with open('DataProcess/Config.json', 'r') as file:
+        config_file = json.load(file)
+        print('Config Sets:', list(config_file.keys()))
+        
+        config = config_file['default']
+        if conifg_set != '':
+            for key in config_file[conifg_set]:
+                config[key] = config_file[conifg_set][key]
+        else:
+            config = set_config(config)
+    
+    [fig_row, fig_col]  = config['row_col']
+    fig_size = config['fig_size']
+    titles = config['titles']
+    data_cols = config['data']
+    
+    labels = config['labels']
+
+    if np.array(labels).shape.__len__() == 1: labels = [labels for i in range(fig_row*fig_col)]
+    
+    colors = config['colors']
+    if np.array(colors).shape.__len__() == 1: colors = [colors for i in range(fig_row*fig_col)]
+    
+    xy_labels = config['xy_labels']
+    if np.array(xy_labels).shape.__len__() == 1: xy_labels = [xy_labels for i in range(fig_row*fig_col)]
+    
+    styles = config['styles']
+    if np.array(styles).shape.__len__() == 1: styles = [styles for i in range(fig_row*fig_col)]
+    
+    ylims  = config['ylims']
+    if np.array(ylims).shape.__len__() == 1: ylims = [ylims for i in range(fig_row*fig_col)]
+    
+    data = [df_data[col].to_numpy()[start_idx:end_idx].T for col in data_cols]
+    
+    data = process_data(data)
+
+    # Start Plotting
+    fig = plt.figure(figsize=fig_size)
+    gs = GridSpec(fig_row, fig_col, figure=fig)
+
+    axes = [fig.add_subplot(gs[row, col]) for row in range(fig_row) for col in range(fig_col)]
+    
+    linewidth = 1.5
+    
+    for fig_idx in range(len(axes)):
+        for data_idx in range(len(data[fig_idx])):
+            axes[fig_idx].plot(range(data[fig_idx].shape[1]), data[fig_idx][data_idx], label=labels[fig_idx][data_idx], linewidth=linewidth, linestyle=styles[fig_idx][data_idx],  color=colors[fig_idx][data_idx])
+
+        axes[fig_idx].set_title(titles[fig_idx], fontsize=14)
+        axes[fig_idx].set_xlabel(xy_labels[fig_idx][0], fontsize=12)
+        axes[fig_idx].set_ylabel(xy_labels[fig_idx][1], fontsize=12)
+        axes[fig_idx].legend(fontsize=10, loc='best', frameon=True, shadow=True, facecolor='white', edgecolor='black')
+        axes[fig_idx].grid(True, which='both', linestyle='--', linewidth=0.6, alpha=0.8)
+        axes[fig_idx].tick_params(axis='both', which='major', labelsize=10)
+        axes[fig_idx].autoscale(enable=True, axis='both', tight=True)
+        # axes[fig_idx].set_facecolor('#F7F7F7')
+        if set_ylim: axes[fig_idx].set_ylim(ylims[fig_idx])
+    
+    
+    linewidth = 1.5
+    
+    plt.tight_layout()
+    plt.subplots_adjust(hspace=0.4)
+    plt.show()

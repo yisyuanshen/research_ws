@@ -1,0 +1,213 @@
+{
+    "default": {
+        "row_col": [2, 2],
+        "fig_size": [8, 6],
+        "titles": [
+            "Data Plot"
+        ],
+        "data": [
+            ["state_theta_a", "state_theta_b", "state_theta_c", "state_theta_d"]
+        ],
+        "labels": [
+            ["state_theta_a", "state_theta_b", "state_theta_c", "state_theta_d"]
+        ],
+        "colors": ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"],
+        "styles": ["-", "--", "-.", ":", "-", "--", "-.", ":", "-", "--"],
+        "xy_labels": ["Time (ms)", "Angle (rad)"],
+        "ylims": [0, 2]
+    },
+    "fx_est_each": {
+        "fig_size": [8, 6],
+        "titles": [
+            "Module A - Fx",
+            "Module B - Fx",
+            "Module C - Fx",
+            "Module D - Fx"
+        ],
+        "data": [
+            ["imp_cmd_Fx_a", "force_Fx_a"],
+            ["imp_cmd_Fx_b", "force_Fx_b"],
+            ["imp_cmd_Fx_c", "force_Fx_c"],
+            ["imp_cmd_Fx_d", "force_Fx_d"]
+        ],
+        "labels": ["Commanded", "Estimated"],
+        "xy_labels": ["Time (ms)", "Force (N)"],
+        "ylims": [-50, 50]
+    },
+    "fz_est_each": {
+        "fig_size": [8, 6],
+        "titles": [
+            "Module A - Fz",
+            "Module B - Fz",
+            "Module C - Fz",
+            "Module D - Fz"
+        ],
+        "data": [
+            ["imp_cmd_Fy_a", "force_Fy_a"],
+            ["imp_cmd_Fy_b", "force_Fy_b"],
+            ["imp_cmd_Fy_c", "force_Fy_c"],
+            ["imp_cmd_Fy_d", "force_Fy_d"]
+        ],
+        "labels": ["Commanded", "Estimated"],
+        "xy_labels": ["Time (ms)", "Force (N)"],
+        "ylims": [-150, 20]
+    },
+    "fx_meas_each": {
+        "fig_size": [8, 6],
+        "titles": [
+            "Module A - Fx",
+            "Module B - Fx",
+            "Module C - Fx",
+            "Module D - Fx"
+        ],
+        "data": [
+            ["imp_cmd_Fx_a", "force_Fx_a", "Fx_1"],
+            ["imp_cmd_Fx_b", "force_Fx_b", "Fx_4"],
+            ["imp_cmd_Fx_c", "force_Fx_c", "Fx_3"],
+            ["imp_cmd_Fx_d", "force_Fx_d", "Fx_2"]
+        ],
+        "labels": ["Commanded", "Estimated", "Measured"],
+        "xy_labels": ["Time (ms)", "Force (N)"],
+        "ylims": [-50, 50]
+    },
+    "fz_meas_each": {
+        "fig_size": [8, 6],
+        "titles": [
+            "Module A - Fz",
+            "Module B - Fz",
+            "Module C - Fz",
+            "Module D - Fz"
+        ],
+        "data": [
+            ["imp_cmd_Fy_a", "force_Fy_a", "Fz_1"],
+            ["imp_cmd_Fy_b", "force_Fy_b", "Fz_4"],
+            ["imp_cmd_Fy_c", "force_Fy_c", "Fz_3"],
+            ["imp_cmd_Fy_d", "force_Fy_d", "Fz_2"]
+        ],
+        "labels": ["Commanded", "Estimated", "Measured"],
+        "xy_labels": ["Time (ms)", "Force (N)"],
+        "ylims": [-150, 20]
+    },
+    "single_leg_est": {
+        "fig_size": [8, 6],
+        "titles": [
+            "Module A - theta",
+            "Module A - beta",
+            "Module A - Fx",
+            "Module A - Fz"
+        ],
+        "data": [
+            [ "cmd_theta_a", "state_theta_a"],
+            [  "cmd_beta_a",  "state_beta_a"],
+            ["imp_cmd_Fx_a",    "force_Fx_a"],
+            ["imp_cmd_Fy_a",    "force_Fy_a"]
+        ],
+        "labels": [
+            ["Commanded", "Measured"],
+            ["Commanded", "Measured"],
+            ["Commanded", "Estimated"],
+            ["Commanded", "Estimated"]
+        ],
+        "xy_labels": [
+            ["Time (ms)", "Angle (rad)"],
+            ["Time (ms)", "Angle (rad)"],
+            ["Time (ms)", "Force (N)"],
+            ["Time (ms)", "Force (N)"]
+        ],
+        "ylims": [
+            [0, 2],
+            [-5, 5],
+            [-50, 50],
+            [-150, 20]
+        ]
+    },
+    "mpc_body_sim": {
+        "row_col": [3, 2],
+        "fig_size": [8, 6],
+        "titles": [
+            "Position X",
+            "Position Z",
+            "Velocity X",
+            "Velocity Z",
+            "Roll",
+            "Pitch"
+        ],
+        "data": [
+            
+        ],
+        "labels": [
+            
+        ],
+        "xy_labels": [
+            
+        ],
+        "ylims": [
+            
+        ]
+    },
+    "mpc_force_sim": {
+        "fig_size": [8, 6],
+        "titles": [
+            "Force Command X",
+            "Force Command Z",
+            "Force State X",
+            "Force State Z"
+        ],
+        "data": [
+            
+        ],
+        "labels": [
+            
+        ],
+        "xy_labels": [
+            
+        ],
+        "ylims": [
+            
+        ]
+    },
+    "mpc_body_real": {
+        "row_col": [3, 2],
+        "fig_size": [8, 6],
+        "titles": [
+            "Position X",
+            "Position Z",
+            "Velocity X",
+            "Velocity Z",
+            "Roll",
+            "Pitch"
+        ],
+        "data": [
+            ["odom_pos_x", "vicon_pos_x"],
+            ["odom_pos_z", "vicon_pos_z"],
+            ["odom_vel_x", "vicon_vel_x"],
+            ["odom_vel_z", "vicon_vel_z"],
+            ["imu_roll", "vicon_roll"],
+            ["imu_pitch", "vicon_pitch"]
+        ],
+        "labels": [
+            ["odom_pos_x", "vicon_pos_x"],
+            ["odom_pos_z", "vicon_pos_z"],
+            ["odom_vel_x", "vicon_vel_x"],
+            ["odom_vel_z", "vicon_vel_z"],
+            ["imu_roll", "vicon_roll"],
+            ["imu_pitch", "vicon_pitch"]
+        ],
+        "xy_labels": [
+            ["Distance (m)", "Time (ms)"],
+            ["Height (m)", "Time (ms)"],
+            ["Velocity (m/s)", "Time (ms)"],
+            ["Velocity (m/s)", "Time (ms)"],
+            ["Angle (deg)", "Time (ms)"],
+            ["Angle (deg)", "Time (ms)"]
+        ],
+        "ylims": [
+            [0, 0],
+            [0, 0],
+            [0, 0],
+            [0, 0],
+            [0, 0],
+            [0, 0]
+        ]
+    }
+}

@@ -484,5 +484,50 @@
                 "ylims": [-120, 30]
             }
         ]
+    },
+    "MPC":{
+        "figure": {
+            "rows": 2,
+            "cols": 2,
+            "size": [10, 8]
+        },
+        "plots": [
+            {
+                "title": "Pos X",
+                "data": ["odom_pos_x"],
+                "labels": ["odom pos x"],
+                "xy_labels": ["Time (ms)", "Dist (m)"],
+                "line_styles": ["-"],
+                "colors": ["C0"],
+                "ylims": [-0.5, 5]
+            },
+            {
+                "title": "Pos Z",
+                "data": ["odom_pos_z"],
+                "labels": ["odom pos z"],
+                "xy_labels": ["Time (ms)", "Dist (m)"],
+                "line_styles": ["-"],
+                "colors": ["C1"],
+                "ylims": [-0.1, 0.1]
+            },
+            {
+                "title": "Vel X",
+                "data": ["odom_vel_x"],
+                "labels": ["odom vel x"],
+                "xy_labels": ["Time (ms)", "Vel (m/s)"],
+                "line_styles": ["-"],
+                "colors": ["C2"],
+                "ylims": [-0.5, 5]
+            },
+            {
+                "title": "Vel Z",
+                "data": ["odom_vel_z"],
+                "labels": ["odom vel z"],
+                "xy_labels": ["Time (ms)", "Vel (m/s)"],
+                "line_styles": ["-"],
+                "colors": ["C3"],
+                "ylims": [-5, 5]
+            }
+        ]
     }
 }
