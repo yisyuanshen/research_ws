@@ -3,16 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import ViconProcess
 
-# df = pd.read_csv("data/0407_mpc/0407_walk_2.csv")
+df = pd.read_csv("data/0407_mpc/0407_walk_2.csv")
 # df = pd.read_csv("data/0407_mpc/0407_MPC_1.csv")
-df = pd.read_csv("data/0407_mpc/mpc_sim.csv")
+df_odom = pd.read_csv("data/0407_mpc/0407_walk_2_odom.csv")
 
 df_vicon, trigger_idx = None, None
-# df_vicon, trigger_idx = ViconProcess.read_csv("data/0407_mpc/vicon/walk_2.csv")
+df_vicon, trigger_idx = ViconProcess.read_csv("data/0407_mpc/vicon/walk_2.csv")
 # df_vicon, trigger_idx = ViconProcess.read_csv("data/0407_mpc/vicon/MPC_1.csv")
 
-start_idx = 10000
-end_idx = -1
+start_idx = 0
+end_idx = 38000
 # end_idx = 32000
 vicon_offset = 0
 force = False
@@ -21,10 +21,16 @@ time = df['Time'][start_idx:end_idx]
 sim_pos_x = df['sim_pos_x'][start_idx:end_idx] - df['sim_pos_x'][start_idx]
 sim_pos_z = df['sim_pos_z'][start_idx:end_idx] - df['sim_pos_z'][start_idx]
 
-odom_pos_x = df['odom_pos_x'][start_idx:end_idx]
-odom_pos_z = df['odom_pos_z'][start_idx:end_idx]
-odom_vel_x = df['odom_vel_x'][start_idx:end_idx]
-odom_vel_z = df['odom_vel_z'][start_idx:end_idx]
+# odom_pos_x = df['odom_pos_x'][start_idx:end_idx]
+# odom_pos_z = df['odom_pos_z'][start_idx:end_idx]
+# odom_vel_x = df['odom_vel_x'][start_idx:end_idx]
+# odom_vel_z = df['odom_vel_z'][start_idx:end_idx]
+
+odom_pos_x = np.repeat(df_odom['p.x'][start_idx//5:end_idx//5].values, 5)
+odom_pos_z = np.repeat(df_odom['p.z'][start_idx//5:end_idx//5].values, 5)
+odom_vel_x = np.repeat(df_odom['v_.x'][start_idx//5:end_idx//5].values, 5)
+odom_vel_z = np.repeat(df_odom['v_.z'][start_idx//5:end_idx//5].values, 5)
+
 
 force_state_x = [df['force_Fx_a'][start_idx:end_idx], df['force_Fx_b'][start_idx:end_idx], df['force_Fx_c'][start_idx:end_idx], df['force_Fx_d'][start_idx:end_idx]]
 force_state_z = [df['force_Fy_a'][start_idx:end_idx], df['force_Fy_b'][start_idx:end_idx], df['force_Fy_c'][start_idx:end_idx], df['force_Fy_d'][start_idx:end_idx]]
@@ -53,16 +59,16 @@ if df_vicon is not None:
 cmd_pos_x = []
 v = 0
 for t in range(len(time)+start_idx):
-    if t < 5000+7000:
+    if t < 5000:
         cmd_pos_x.append(0)
-    elif t < 8000+7000:
+    elif t < 8000:
         v += 0.1/3000
         cmd_pos_x.append(cmd_pos_x[-1]+v*0.001)
-    # elif t < 27000+7000:
-    elif t < 32000+7000:
+    # elif t < 27000:
+    elif t < 32000:
         cmd_pos_x.append(cmd_pos_x[-1]+v*0.001)
-    # elif t < 30000+7000:
-    elif t < 35000+7000:
+    # elif t < 30000:
+    elif t < 35000:
         v -= 0.1/3000
         cmd_pos_x.append(cmd_pos_x[-1]+v*0.001)
     else:
